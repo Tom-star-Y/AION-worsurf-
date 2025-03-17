@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>新建任务 - AION 小美任务</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            color: #2c3e50;
+        }
+
+        .content {
+            padding: 24px;
+        }
+
+        .task-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #3498db;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .input-with-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .input-with-actions input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .action-btn-small {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            color: #666;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn-small:hover {
+            background: #f8f9fa;
+            border-color: #3498db;
+            color: #3498db;
+        }
+
+        .priority-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .priority-option-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            color: #666;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .priority-option-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .priority-desc {
+            width: 100%;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .blacklist-setting {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .toggle-switch {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toggle-switch input[type="checkbox"] {
+            display: none;
+        }
+
+        .toggle-switch label {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch label:after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked + label {
+            background-color: #3498db;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked + label:after {
+            transform: translateX(20px);
+        }
+
+        .import-card {
+            box-shadow: none;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .import-card-upload {
+            padding: 30px;
+            text-align: center;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            margin: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .import-card-upload:hover {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .time-range {
+            display: flex;
+            gap: 20px;
+        }
+
+        .time-input {
+            flex: 1;
+        }
+
+        .time-input input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .interval-selection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .interval-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            color: #666;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .interval-btn.active {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+        }
+
+        .custom-interval {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .custom-interval input {
+            width: 80px;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .cancel-btn, .submit-btn {
+            padding: 8px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cancel-btn {
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            color: #666;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            border: none;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: #e9ecef;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>新建任务</h1>
+        </div>
+        <div class="content">
+            <!-- 任务基本信息 -->
+            <div class="task-section">
+                <h3 class="section-title">
+                    <i class="fas fa-info-circle"></i>
+                    任务基本信息
+                </h3>
+                <div class="form-group">
+                    <label>任务名称</label>
+                    <div class="input-with-actions">
+                        <input type="text" id="taskName" placeholder="自动填充当前时间" value="2025-03-05 (13:28)">
+                        <button class="action-btn-small" id="copyTaskName">
+                            <i class="fas fa-copy"></i>
+                            复制
+                        </button>
+                        <button class="action-btn-small" id="clearTaskName">
+                            <i class="fas fa-eraser"></i>
+                            清空
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>执行优先级</label>
+                    <div class="priority-selection">
+                        <button class="priority-option-btn" data-priority="独享">独享</button>
+                        <button class="priority-option-btn active" data-priority="正常">正常</button>
+                        <button class="priority-option-btn" data-priority="空闲">空闲</button>
+                        <div class="priority-desc">正常:添加至目前任务队列，适合普通任务</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>黑名单</label>
+                    <div class="blacklist-setting">
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="useBlacklistSwitch" checked>
+                            <label for="useBlacklistSwitch"></label>
+                            <span>使用黑名单功能</span>
+                        </div>
+                        <button class="action-btn-small" id="manageBlacklist">
+                            <i class="fas fa-ban"></i>
+                            管理黑名单
+                        </button>
+                        <button class="action-btn-small" id="importBlacklist">
+                            <i class="fas fa-file-import"></i>
+                            一键导入
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线索导入 -->
+            <div class="task-section">
+                <h3 class="section-title">
+                    <i class="fas fa-upload"></i>
+                    线索导入
+                </h3>
+                <div class="import-card">
+                    <div class="import-card-upload">
+                        <i class="fas fa-cloud-upload-alt" style="font-size: 32px; color: #3498db; margin-bottom: 15px;"></i>
+                        <span style="display: block; font-size: 16px; color: #2c3e50; margin-bottom: 8px;">点击或拖拽文件到此处</span>
+                        <small style="display: block; color: #666; margin-bottom: 15px;">支持 .xlsx, .csv 格式</small>
+                        <a href="manual.html" target="_blank" class="download-template-link">
+                            <i class="fas fa-download"></i>
+                            下载线索文件样例
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 呼叫时间设置 -->
+            <div class="task-section">
+                <h3 class="section-title">
+                    <i class="fas fa-clock"></i>
+                    呼叫时间设置
+                </h3>
+                <div class="form-group">
+                    <div class="time-range">
+                        <div class="time-input">
+                            <label>开始时间</label>
+                            <input type="text" id="startTime" value="2025-03-05 13:28" readonly>
+                        </div>
+                        <div class="time-input">
+                            <label>结束时间</label>
+                            <input type="text" id="endTime" value="2026-03-05 13:28" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>呼叫时间间隔</label>
+                    <div class="interval-selection">
+                        <button class="interval-btn active">自动</button>
+                        <button class="interval-btn">1s</button>
+                        <button class="interval-btn">3s</button>
+                        <button class="interval-btn">5s</button>
+                        <button class="interval-btn">10s</button>
+                        <button class="interval-btn">30s</button>
+                        <button class="interval-btn">60s</button>
+                        <div class="custom-interval">
+                            <input type="number" placeholder="自定义" min="1">
+                            <span>秒</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 每周呼叫时间段 -->
+            <div class="task-section">
+                <h3 class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    每周呼叫时间段
+                </h3>
+                <div class="form-group">
+                    <div class="time-grid" id="weeklyTimeGrid">
+                        <!-- 时间网格将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer">
+            <button class="cancel-btn">取消</button>
+            <button class="submit-btn">
+                <i class="fas fa-check"></i>
+                提交
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 初始化时间网格
+        function generateTimeGrid() {
+            const weekDays = ['', '周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+            const hours = Array.from({length: 12}, (_, i) => i + 8); // 8:00 - 19:00
+            const grid = document.getElementById('weeklyTimeGrid');
+
+            // 创建表格
+            const table = document.createElement('table');
+            table.style.width = '100%';
+            table.style.borderCollapse = 'collapse';
+
+            // 添加表头
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            weekDays.forEach(day => {
+                const th = document.createElement('th');
+                th.textContent = day;
+                th.style.padding = '8px';
+                th.style.backgroundColor = '#f8f9fa';
+                th.style.border = '1px solid #eee';
+                headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            // 添加时间行
+            const tbody = document.createElement('tbody');
+            hours.forEach(hour => {
+                const row = document.createElement('tr');
+                
+                // 添加时间列
+                const timeCell = document.createElement('td');
+                timeCell.textContent = `${hour}:00`;
+                timeCell.style.padding = '8px';
+                timeCell.style.border = '1px solid #eee';
+                timeCell.style.backgroundColor = '#f8f9fa';
+                row.appendChild(timeCell);
+                
+                // 添加每天的单元格
+                for(let i = 1; i <= 7; i++) {
+                    const cell = document.createElement('td');
+                    cell.style.padding = '8px';
+                    cell.style.border = '1px solid #eee';
+                    cell.style.cursor = 'pointer';
+                    
+                    // 设置工作时间为蓝色
+                    if (i <= 5 && hour >= 9 && hour <= 18 && hour !== 12) {
+                        cell.style.backgroundColor = '#e1f0ff';
+                        cell.style.color = '#3498db';
+                    }
+                    
+                    cell.addEventListener('click', () => {
+                        if (cell.style.backgroundColor === 'rgb(225, 240, 255)') {
+                            cell.style.backgroundColor = '';
+                            cell.style.color = '';
+                        } else {
+                            cell.style.backgroundColor = '#e1f0ff';
+                            cell.style.color = '#3498db';
+                        }
+                    });
+                    
+                    row.appendChild(cell);
+                }
+                
+                tbody.appendChild(row);
+            });
+            table.appendChild(tbody);
+            grid.appendChild(table);
+        }
+
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTimeGrid();
+
+            // 优先级按钮点击事件
+            document.querySelectorAll('.priority-option-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.priority-option-btn').forEach(b => 
+                        b.classList.remove('active'));
+                    this.classList.add('active');
+                    document.querySelector('.priority-desc').textContent = 
+                        `${this.dataset.priority}: ${getPriorityDesc(this.dataset.priority)}`;
+                });
+            });
+
+            // 时间间隔按钮点击事件
+            document.querySelectorAll('.interval-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.interval-btn').forEach(b => 
+                        b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 复制任务名称
+            document.getElementById('copyTaskName').addEventListener('click', function() {
+                const taskName = document.getElementById('taskName').value;
+                navigator.clipboard.writeText(taskName)
+                    .then(() => alert('任务名称已复制'))
+                    .catch(err => console.error('复制失败:', err));
+            });
+
+            // 清空任务名称
+            document.getElementById('clearTaskName').addEventListener('click', function() {
+                document.getElementById('taskName').value = '';
+            });
+
+            // 文件拖拽上传
+            const uploadArea = document.querySelector('.import-card-upload');
+            
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#3498db';
+                this.style.backgroundColor = 'rgba(52, 152, 219, 0.05)';
+            });
+
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '';
+            });
+
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.style.borderColor = '#ddd';
+                this.style.backgroundColor = '';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    const file = files[0];
+                    const extension = file.name.split('.').pop().toLowerCase();
+                    
+                    if (extension === 'xlsx' || extension === 'csv') {
+                        alert(`已选择文件: ${file.name}`);
+                        // 这里可以添加文件上传处理逻辑
+                    } else {
+                        alert('请上传 .xlsx 或 .csv 格式的文件');
+                    }
+                }
+            });
+
+            // 取消按钮
+            document.querySelector('.cancel-btn').addEventListener('click', function() {
+                if (confirm('确定要取消创建任务吗？')) {
+                    window.close();
+                }
+            });
+
+            // 提交按钮
+            document.querySelector('.submit-btn').addEventListener('click', function() {
+                // 这里添加表单验证和提交逻辑
+                alert('任务创建成功！');
+                window.close();
+            });
+        });
+
+        // 获取优先级描述
+        function getPriorityDesc(priority) {
+            const descriptions = {
+                '独享': '独占资源，最高优先级',
+                '正常': '添加至目前任务队列，适合普通任务',
+                '空闲': '资源空闲时处理'
+            };
+            return descriptions[priority] || '';
+        }
+    </script>
+</body>
+</html> 

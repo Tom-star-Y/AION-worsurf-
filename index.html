@@ -1,0 +1,1704 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION 工作台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+        }
+
+        .breadcrumb {
+            position: fixed;
+            top: 70px;
+            left: 240px;
+            right: 0;
+            background-color: #fff;
+            padding: 15px 30px;
+            border-bottom: 1px solid #e9ecef;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .breadcrumb a {
+            color: #3498db;
+            text-decoration: none;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .breadcrumb a:hover {
+            color: #2980b9;
+        }
+
+        .breadcrumb i {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        .breadcrumb span {
+            color: #7f8c8d;
+            font-size: 14px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: 15px;
+            cursor: pointer;
+            background-color: #f5f7fa;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .icon-btn i {
+            font-size: 18px;
+            color: #5a6268;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 18px;
+            height: 18px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 20px;
+            cursor: pointer;
+            object-fit: cover;
+            border: 2px solid #3498db;
+        }
+
+        .main-container {
+            margin-top: 120px; /* 调整顶部边距，为面包屑导航留出空间 */
+            margin-left: 240px;
+            padding: 20px 20px 20px 40px; /* adjusted padding to add consistent left margin */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start; /* Ensures left alignment of all children */
+        }
+
+        .top-section {
+            display: flex;
+            flex-direction: row;
+            gap: 15px;
+            margin-bottom: 15px;
+            justify-content: flex-start;
+            width: 100%;
+            max-width: 800px;
+            padding: 0;
+        }
+
+        .welcome-section {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            height: 180px; /* Fixed height to match finance panel */
+            position: relative;
+            min-width: auto;
+            flex: 1; /* Added to control width in flex container */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center content vertically */
+        }
+
+        .welcome-header {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; /* Reduced from 20px */
+            margin-top: 0; /* Changed from 15px to remove unnecessary margin */
+        }
+
+        .welcome-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #2c3e50;
+            margin: 0;
+        }
+
+        .welcome-days {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            color: #34495e;
+            font-size: 14px;
+            margin-top: 0;
+            line-height: 1;
+        }
+
+        .highlight-days {
+            color: #27ae60;
+            font-weight: bold;
+            font-size: 32px;
+            margin: 0 2px;
+            line-height: 0.9;
+            position: relative;
+            top: 2px;
+        }
+
+        .call-stats {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .stat-item {
+            text-align: right;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .stat-value.outbound {
+            color: #e67e22;
+        }
+
+        .stat-value.inbound {
+            color: #27ae60;
+        }
+
+        .finance-panel {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            width: 100%; 
+            height: 200px; /* 增加高度以适应新布局 */
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: auto;
+            flex: 1;
+        }
+
+        /* 添加费用异常态样式 */
+        .finance-panel.zero-balance .balance-amount {
+            color: #e74c3c;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .finance-panel.negative-balance .balance-amount {
+            color: #e74c3c;
+            animation: blinkBalance 1s 2;
+        }
+
+        @keyframes blinkBalance {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .emergency-credit {
+            font-size: 13px;
+            color: #e67e22;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .emergency-credit.warning {
+            color: #e67e22;
+            font-weight: 500;
+        }
+
+        .service-warning {
+            font-size: 13px;
+            color: #e74c3c;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .amount-block {
+            width: 65%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .balance-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .balance-row span {
+            color: #2c3e50;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .balance-label {
+            font-size: 15px;
+            margin-right: 4px;
+        }
+
+        .balance-amount {
+            font-size: 32px;
+            color: #2c3e50;
+        }
+
+        .expense-row {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            opacity: 0.5;
+        }
+
+        .expense-row span {
+            color: #95a5a6;
+            font-weight: 400;
+            line-height: 1;
+        }
+
+        .expense-label {
+            font-size: 13px;
+        }
+
+        .expense-amount {
+            font-size: 15px;
+        }
+
+        /* 修改操作区域样式 */
+        .finance-actions-area {
+            position: absolute;
+            right: 20px;
+            bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+            width: auto;
+        }
+
+        .finance-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .recharge-action {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .balance-estimate {
+            font-size: 13px;
+            color: #e74c3c;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+
+        .recharge-btn {
+            padding: 8px 24px;
+            font-size: 13px;
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .recharge-btn:hover {
+            background-color: rgba(46, 204, 113, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .finance-panel.zero-balance .recharge-btn,
+        .finance-panel.negative-balance .recharge-btn {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .finance-panel.zero-balance .recharge-btn:hover,
+        .finance-panel.negative-balance .recharge-btn:hover {
+            background-color: rgba(231, 76, 60, 0.25);
+        }
+
+        .view-details {
+            font-size: 13px;
+            color: #95a5a6;
+            text-align: right;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+        }
+
+        .view-details:hover {
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        .employee-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 0;
+            width: 100%;
+        }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            padding-top: 90px;
+            z-index: 90;
+        }
+
+        .nav-item {
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #2c3e50;
+            text-decoration: none;
+        }
+
+        .nav-item:hover {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .nav-item.active {
+            background-color: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+            border-right: 3px solid #3498db;
+        }
+
+        .nav-item i {
+            margin-right: 12px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-section-title {
+            padding: 15px 25px;
+            font-size: 14px;
+            color: #666;
+            font-weight: 500;
+            background-color: #f8f9fa;
+            margin: 10px 0;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .nav-section-title::after {
+            content: '\f105';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            font-size: 14px;
+            transition: transform 0.3s ease;
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .nav-section-title.open::after {
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        .nav-child {
+            padding-left: 45px;
+            display: none;
+        }
+        
+        .nav-section-title.open + .nav-child {
+            display: flex;
+        }
+
+        .left-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .middle-section {
+            flex: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .employee-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .employee-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 12px;
+        }
+
+        .employee-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .info-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .employee-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .job-title {
+            font-size: 12px;
+            font-style: italic;
+            color: #95a5a6;
+            margin-bottom: 2px;
+        }
+
+        .agent-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-badge {
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(46, 204, 113, 0.1);
+            color: #2ecc71;
+        }
+
+        .status-time {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .metric-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .metric-item:hover {
+            background: #f1f3f5;
+            transform: translateY(-1px);
+        }
+
+        .metric-value {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1;
+            margin-bottom: 2px;
+        }
+
+        .metric-value.highlight {
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: #666;
+            text-align: center;
+        }
+
+        .metric-icon {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-bottom: 4px;
+        }
+
+        .details-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            font-size: 13px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 6px 12px;
+            border-radius: 4px;
+            margin-top: auto;
+            margin-left: auto;
+            background: #f8f9fa;
+        }
+        
+        .details-link:hover {
+            color: #3498db;
+            background: #f1f3f5;
+        }
+
+        .task-filter-hint {
+            font-size: 12px;
+            color: #95a5a6;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .task-filter-hint:hover {
+            color: #7f8c8d;
+        }
+
+        .task-filter {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .task-button {
+            padding: 6px 15px;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f8f9fa;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            position: relative;
+            width: 180px;
+        }
+
+        .task-button:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .task-button.active {
+            background: #3498db;
+            color: #fff;
+        }
+
+        .task-button.completed {
+            margin-left: 0;
+        }
+
+        .task-button.current {
+            margin-left: 15px;
+        }
+
+        .task-button.upcoming {
+            margin-left: 30px;
+        }
+
+        .task-button.completed .dot {
+            background: #27ae60;
+        }
+
+        .task-button.current .dot {
+            background: #3498db;
+        }
+
+        .task-button.upcoming .dot {
+            background: #95a5a6;
+        }
+
+        .task-button::after {
+            content: '';
+            position: absolute;
+            left: -10px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 0;
+            background: #e9ecef;
+            transition: height 0.3s ease;
+        }
+
+        .task-button:hover::after {
+            height: 100%;
+        }
+
+        .task-stats {
+            margin-top: 20px;
+            position: relative;
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+        }
+
+        .projects-preview {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .projects-dropdown {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .projects-dropdown:hover {
+            background: rgba(52, 152, 219, 0.1);
+        }
+
+        .projects-dropdown-text {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+
+        .projects-dropdown i {
+            font-size: 12px;
+            color: #95a5a6;
+            transition: transform 0.3s ease;
+        }
+
+        .projects-dropdown.active i {
+            transform: rotate(180deg);
+        }
+
+        .projects-menu {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.15);
+            width: 600px;
+            padding: 20px;
+            display: none;
+            z-index: 1000;
+        }
+
+        .projects-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
+        }
+
+        .projects-menu.show {
+            display: block;
+        }
+
+        .projects-menu-overlay.show {
+            display: block;
+        }
+
+        .projects-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .projects-menu-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .projects-menu-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #95a5a6;
+            transition: all 0.3s ease;
+        }
+
+        .projects-menu-close:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .projects-menu .project-row {
+            margin-bottom: 12px;
+            padding: 10px;
+        }
+
+        .projects-menu .project-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .project-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+
+        .project-row:hover {
+            background: #f1f3f5;
+        }
+
+        .project-info {
+            width: 120px;
+            flex-shrink: 0;
+        }
+
+        .project-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .project-count {
+            font-size: 11px;
+            color: #95a5a6;
+        }
+
+        .gantt-container {
+            flex: 1;
+            height: 20px;
+            background: #f1f3f5;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gantt-progress {
+            position: absolute;
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .gantt-progress.primary {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .gantt-progress.success {
+            background: linear-gradient(90deg, #2ecc71, #27ae60);
+        }
+
+        .completion-percent {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .dropdown-projects {
+            position: relative;
+            margin-left: auto;
+        }
+
+        .dropdown-toggle {
+            padding: 6px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            color: #6c757d;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-toggle:hover {
+            color: #2c3e50;
+        }
+
+        .dropdown-content {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+            width: 280px;
+            padding: 8px;
+            display: none;
+            z-index: 100;
+        }
+
+        .dropdown-content.show {
+            display: block;
+        }
+
+        .task-summary {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 15px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .summary-dot.completed {
+            background: #27ae60;
+        }
+
+        .summary-dot.current {
+            background: #3498db;
+        }
+
+        .summary-dot.upcoming {
+            background: #95a5a6;
+        }
+
+        .summary-text {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        .summary-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .business-opportunity {
+            position: absolute;
+            top: 0;
+            right: 15px;
+            background-color: rgba(52, 152, 219, 0.1);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #3498db;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .project-row:hover .project-name {
+            color: #3498db;
+        }
+
+        .data-flow-chart {
+            margin-top: 25px;
+            height: 60px;
+            position: relative;
+            background: rgba(52, 152, 219, 0.1);
+            border-radius: 4px;
+            padding: 8px;
+            margin-bottom: 35px;
+        }
+
+        .data-point {
+            width: 8px;
+            height: 8px;
+            background-color: #3498db;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: pulse 2s infinite;
+        }
+
+        .data-line {
+            height: 2px;
+            background: linear-gradient(90deg, #3498db 50%, transparent 50%);
+            background-size: 8px 2px;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: flowLine 2s linear infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: translateY(-50%) scale(1); }
+            50% { transform: translateY(-50%) scale(1.5); }
+            100% { transform: translateY(-50%) scale(1); }
+        }
+
+        @keyframes flowLine {
+            0% { background-position: 0 0; }
+            100% { background-position: 16px 0; }
+        }
+
+        .data-label {
+            font-size: 12px;
+            color: #6c757d;
+            position: absolute;
+            bottom: -30px;
+        }
+
+        .data-value {
+            font-size: 12px;
+            color: #2c3e50;
+            font-weight: 500;
+            position: absolute;
+            bottom: -15px;
+        }
+
+        .task-filter-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            min-width: 180px;
+        }
+
+        .work-status {
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-main {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .status-sub {
+            font-size: 12px;
+            color: #95a5a6;
+        }
+        
+        .call-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .conversion {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        
+        .conversion-value {
+            font-size: 36px;
+            font-weight: 600;
+            color: #3498db;
+            line-height: 1;
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .conversion-label {
+            font-size: 13px;
+            color: #666;
+            background: rgba(52, 152, 219, 0.1);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .total-calls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+        }
+        
+        .calls-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        .calls-label {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .details-link {
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+            margin-top: 12px;
+            color: #666;
+            font-size: 13px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 6px 0;
+            border-top: 1px solid #eee;
+        }
+        
+        .details-link:hover {
+            color: #3498db;
+            background: rgba(52, 152, 219, 0.05);
+        }
+
+        /* 添加状态切换按钮样式 */
+        .state-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 2;
+        }
+
+        .state-toggle:hover {
+            background: #e9ecef;
+        }
+
+        .state-toggle i {
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        /* 空白态样式 */
+        .employee-card.empty-state .employee-info,
+        .employee-card.error-state .employee-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            width: 100%;
+        }
+
+        .empty-state-message,
+        .error-state-message {
+            font-size: 16px;
+            color: #6c757d;
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .empty-state-message i,
+        .error-state-message i {
+            font-size: 48px;
+            color: #95a5a6;
+        }
+
+        .employee-card.empty-state .metrics-grid,
+        .employee-card.empty-state .agent-status,
+        .employee-card.empty-state .job-title,
+        .employee-card.error-state .metrics-grid,
+        .employee-card.error-state .agent-status,
+        .employee-card.error-state .job-title {
+            display: none;
+        }
+
+        .employee-card.error-state .error-state-message {
+            color: #e74c3c;
+        }
+
+        .employee-card.error-state .error-state-message i {
+            color: #e74c3c;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 下拉菜单功能
+            const dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+            
+            // 费用状态切换功能
+            window.toggleFinanceState = function() {
+                const financePanel = document.getElementById('financePanel');
+                const balanceAmount = financePanel.querySelector('.balance-amount');
+                const emergencyCredit = financePanel.querySelector('.emergency-credit');
+                const serviceWarning = financePanel.querySelector('.service-warning');
+                const currentState = financePanel.getAttribute('data-state') || 'normal';
+                const states = ['normal', 'zero', 'negative'];
+                
+                // 获取当前状态的索引
+                let currentIndex = states.indexOf(currentState);
+                // 计算下一个状态的索引
+                let nextIndex = (currentIndex + 1) % states.length;
+                let nextState = states[nextIndex];
+                
+                // 移除所有状态类
+                financePanel.classList.remove('zero-balance', 'negative-balance');
+                emergencyCredit.style.display = 'none';
+                serviceWarning.style.display = 'none';
+                
+                // 根据新状态设置显示内容
+                if (nextState === 'zero') {
+                    financePanel.classList.add('zero-balance');
+                    balanceAmount.textContent = '¥0';
+                    emergencyCredit.style.display = 'block';
+                } else if (nextState === 'negative') {
+                    financePanel.classList.add('negative-balance');
+                    balanceAmount.textContent = '¥-100';
+                    emergencyCredit.style.display = 'block';
+                    serviceWarning.style.display = 'block';
+                } else {
+                    balanceAmount.textContent = '¥15,260';
+                }
+                
+                // 更新状态属性
+                financePanel.setAttribute('data-state', nextState);
+            };
+
+            // 状态切换功能
+            window.toggleState = function(employee) {
+                const card = document.querySelector(`.employee-card[data-employee="${employee}"]`);
+                const currentState = card.getAttribute('data-state') || 'normal';
+                const states = ['normal', 'empty', 'error'];
+                
+                // 获取当前状态的索引
+                let currentIndex = states.indexOf(currentState);
+                // 计算下一个状态的索引
+                let nextIndex = (currentIndex + 1) % states.length;
+                let nextState = states[nextIndex];
+                
+                // 移除所有状态类
+                card.classList.remove('empty-state', 'error-state');
+                
+                // 隐藏所有状态消息
+                card.querySelector('.empty-state-message').style.display = 'none';
+                card.querySelector('.error-state-message').style.display = 'none';
+                
+                // 显示正常状态的内容
+                card.querySelector('.metrics-grid').style.display = 'grid';
+                card.querySelector('.agent-status').style.display = 'flex';
+                card.querySelector('.job-title').style.display = 'block';
+                
+                // 根据新状态设置显示内容
+                if (nextState === 'empty') {
+                    card.classList.add('empty-state');
+                    card.querySelector('.empty-state-message').style.display = 'flex';
+                    card.querySelector('.metrics-grid').style.display = 'none';
+                    card.querySelector('.agent-status').style.display = 'none';
+                    card.querySelector('.job-title').style.display = 'none';
+                } else if (nextState === 'error') {
+                    card.classList.add('error-state');
+                    card.querySelector('.error-state-message').style.display = 'flex';
+                    card.querySelector('.metrics-grid').style.display = 'none';
+                    card.querySelector('.agent-status').style.display = 'none';
+                    card.querySelector('.job-title').style.display = 'none';
+                }
+                
+                // 更新状态属性
+                card.setAttribute('data-state', nextState);
+                
+                // 添加旋转动画到图标
+                const icon = card.querySelector('.state-toggle i');
+                icon.style.transform = 'rotate(360deg)';
+                setTimeout(() => {
+                    icon.style.transform = 'rotate(0deg)';
+                }, 300);
+            };
+            
+            // 为状态切换按钮添加过渡效果
+            document.querySelectorAll('.state-toggle i').forEach(icon => {
+                icon.style.transition = 'transform 0.3s ease';
+            });
+            
+            dropdownToggles.forEach(toggle => {
+                toggle.addEventListener('click', function(e) {
+                    const content = this.nextElementSibling;
+                    content.classList.toggle('show');
+                    e.stopPropagation();
+                });
+            });
+
+            // 点击其他地方关闭下拉菜单
+            document.addEventListener('click', function(e) {
+                const dropdowns = document.querySelectorAll('.dropdown-content');
+                dropdowns.forEach(dropdown => {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.classList.remove('show');
+                    }
+                });
+            });
+            
+            // 导航菜单折叠功能
+            const navSectionTitles = document.querySelectorAll('.nav-section-title');
+            
+            navSectionTitles.forEach(title => {
+                // 默认隐藏子菜单
+                const nextElements = [];
+                let nextElement = title.nextElementSibling;
+                
+                while (nextElement && nextElement.classList.contains('nav-child')) {
+                    nextElements.push(nextElement);
+                    nextElement = nextElement.nextElementSibling;
+                }
+                
+                // 点击标题展开/折叠子菜单
+                title.addEventListener('click', function() {
+                    this.classList.toggle('open');
+                    
+                    const isOpen = this.classList.contains('open');
+                    nextElements.forEach(elem => {
+                        elem.style.display = isOpen ? 'flex' : 'none';
+                    });
+                });
+            });
+
+            // 任务按钮切换
+            const taskButtons = document.querySelectorAll('.task-button');
+            
+            taskButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const parent = this.closest('.task-filter');
+                    parent.querySelectorAll('.task-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                });
+            });
+
+            // 项目下拉菜单功能
+            const projectsDropdowns = document.querySelectorAll('.projects-dropdown');
+            
+            projectsDropdowns.forEach(dropdown => {
+                dropdown.addEventListener('click', function(e) {
+                    const menu = this.nextElementSibling.nextElementSibling;
+                    const overlay = this.nextElementSibling;
+                    
+                    overlay.classList.add('show');
+                    menu.classList.add('show');
+                    e.stopPropagation();
+                });
+            });
+
+            // 关闭按钮功能
+            const closeButtons = document.querySelectorAll('.projects-menu-close');
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const menu = this.closest('.projects-menu');
+                    const overlay = menu.previousElementSibling;
+                    
+                    menu.classList.remove('show');
+                    overlay.classList.remove('show');
+                });
+            });
+
+            // 点击遮罩层关闭菜单
+            const overlays = document.querySelectorAll('.projects-menu-overlay');
+            overlays.forEach(overlay => {
+                overlay.addEventListener('click', function() {
+                    this.classList.remove('show');
+                    this.nextElementSibling.classList.remove('show');
+                });
+            });
+
+            // ESC键关闭菜单
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const menus = document.querySelectorAll('.projects-menu.show');
+                    const overlays = document.querySelectorAll('.projects-menu-overlay.show');
+                    
+                    menus.forEach(menu => menu.classList.remove('show'));
+                    overlays.forEach(overlay => overlay.classList.remove('show'));
+                }
+            });
+        });
+
+        // 导航栏折叠菜单功能
+        document.getElementById('xiaomei-workspace').addEventListener('click', function() {
+            this.classList.toggle('open');
+            document.getElementById('xiaomei-menu').classList.toggle('open');
+        });
+        
+        // 页面加载时自动展开当前选中的折叠菜单
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取当前页面URL
+            const currentPage = window.location.pathname.split('/').pop();
+            
+            // 检查当前页面是否属于小美工作台的子页面
+            const xiaomeiPages = ['xiaomei_today_tasks.html', 'interaction.html', 'crm.html', 'detail1.html'];
+            
+            if (xiaomeiPages.includes(currentPage)) {
+                document.getElementById('xiaomei-workspace').classList.add('open');
+                document.getElementById('xiaomei-menu').classList.add('open');
+                
+                // 设置当前子菜单项为活动状态
+                document.querySelectorAll('.nav-child').forEach(item => {
+                    if (item.getAttribute('href') === currentPage) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 检查当前页面是否属于全员工客户管理的子页面
+            const allCustomerPages = ['all_customer_management.html'];
+            
+            if (allCustomerPages.includes(currentPage)) {
+                // 设置当前子菜单项为活动状态
+                document.querySelectorAll('.nav-child').forEach(item => {
+                    if (item.getAttribute('href') === currentPage) {
+                        item.classList.add('active');
+                    } else {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <nav class="side-nav">
+        <div class="nav-group">
+            <a href="index.html" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>员工中心</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <div class="nav-group-title">工作台切换</div>
+            <a href="xiaomei_today_tasks.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>小美工作台</span>
+            </a>
+            <a href="customer_service.html" class="nav-item">
+                <i class="fas fa-user-tie"></i>
+                <span>小明工作台</span>
+            </a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">客户管理系统</div>
+            <a href="crm.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>客户管理</span>
+            </a>
+        </div>
+    </nav>
+    <header class="header">
+        <div class="logo">
+            <img src="AION LOGO.png" alt="AION Logo">
+            <h1>工作台</h1>
+        </div>
+        <div class="header-right">
+            <div class="icon-btn">
+                <i class="fas fa-bell"></i>
+                <span class="notification-badge">3</span>
+            </div>
+            <div class="icon-btn">
+                <i class="fas fa-cog"></i>
+            </div>
+            <img src="https://via.placeholder.com/40" alt="User Avatar" class="user-avatar">
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="index.html">
+            <i class="fas fa-home"></i>
+            员工中心
+        </a>
+    </div>
+
+    <main class="main-container">
+        <div class="top-section">
+            <section class="welcome-section">
+                <div class="welcome-header">
+                <h2 class="welcome-title">XX公司您好！</h2>
+                    <div class="welcome-days">
+                        <span>AION已陪伴您</span>
+                        <span class="highlight-days">30</span>
+                        <span>天的时光</span>
+                    </div>
+                    </div>
+            </section>
+
+            <section class="finance-panel" id="financePanel">
+                <div class="state-toggle" onclick="toggleFinanceState()">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="amount-block">
+                    <div class="balance-row">
+                        <span class="balance-label">余额</span>
+                        <span class="balance-amount">¥15,260</span>
+                    </div>
+                    <div class="emergency-credit">
+                        紧急授信额度10000元
+                    </div>
+                    <div class="service-warning">
+                        预计一日内停止服务
+                    </div>
+                    <div class="expense-row">
+                        <span class="expense-label">消耗</span>
+                        <span class="expense-amount">¥1,000</span>
+                    </div>
+                </div>
+                <div class="finance-actions-area">
+                    <div class="recharge-action">
+                        <button class="recharge-btn">立即充值</button>
+                        <a href="fee_management.html" class="view-details">查看费用详情</a>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="employee-section">
+                <div class="employee-card" data-employee="xiaomei">
+                    <div class="state-toggle" onclick="toggleState('xiaomei')">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="employee-avatar">
+                        <a href="xiaomei_today_tasks.html">
+                            <img src="李小红.png" alt="李小红" class="avatar-img">
+                        </a>
+                    </div>
+                    <div class="employee-info">
+                        <div class="info-header">
+                            <div class="job-title">外呼专员</div>
+                            <div class="employee-name">李小红</div>
+                            <div class="agent-status">
+                                <span class="status-badge">工作中</span>
+                                <span class="status-time">预计8H后完成全部任务</span>
+                            </div>
+                        </div>
+                        <div class="empty-state-message" style="display: none;">
+                            <i class="fas fa-inbox"></i>
+                            <span>目前没有计划中的任务，点击我新建任务吧</span>
+                        </div>
+                        <div class="error-state-message" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>目前系统貌似出现了异常，AION正在紧急维护中</span>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <i class="fas fa-phone-volume metric-icon"></i>
+                                <span class="metric-value">10,000</span>
+                                <span class="metric-label">今日已拨通</span>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-chart-line metric-icon"></i>
+                                <span class="metric-value highlight">800</span>
+                                <span class="metric-label">转化商机</span>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-percentage metric-icon"></i>
+                                <span class="metric-value">8%</span>
+                                <span class="metric-label">转化率</span>
+                            </div>
+                        </div>
+                        <a href="xiaomei_today_tasks.html" class="details-link">
+                            查看员工详情
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="employee-card" data-employee="xiaoming">
+                    <div class="state-toggle" onclick="toggleState('xiaoming')">
+                        <i class="fas fa-sync-alt"></i>
+                    </div>
+                    <div class="employee-avatar">
+                        <a href="customer_service.html">
+                            <img src="张小明.png" alt="张小明" class="avatar-img">
+                        </a>
+                    </div>
+                    <div class="employee-info">
+                        <div class="info-header">
+                            <div class="job-title">客服专员</div>
+                            <div class="employee-name">张小明</div>
+                            <div class="agent-status">
+                                <span class="status-badge">工作中</span>
+                                <span class="status-time">今日工作进度</span>
+                            </div>
+                        </div>
+                        <div class="empty-state-message" style="display: none;">
+                            <i class="fas fa-headset"></i>
+                            <span>目前还没有收到客户的来电，点击我查看链接是否正常</span>
+                        </div>
+                        <div class="error-state-message" style="display: none;">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>目前系统貌似出现了异常，AION正在紧急维护中</span>
+                        </div>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <i class="fas fa-headset metric-icon"></i>
+                                <span class="metric-value">10,000</span>
+                                <span class="metric-label">今日接听</span>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-tasks metric-icon"></i>
+                                <span class="metric-value highlight">1,000</span>
+                                <span class="metric-label">完成工单</span>
+                            </div>
+                            <div class="metric-item">
+                                <i class="fas fa-thumbs-up metric-icon"></i>
+                                <span class="metric-value">99%</span>
+                                <span class="metric-label">好评率</span>
+                            </div>
+                        </div>
+                        <a href="customer_service.html" class="details-link">
+                            查看员工详情
+                            <i class="fas fa-chevron-right"></i>
+                        </a>
+                    </div>
+                </div>
+        </div>
+    </main>
+</body>
+</html>
+

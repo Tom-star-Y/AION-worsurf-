@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION 线索文件导入说明</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .manual-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .manual-header h1 {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .manual-header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .manual-section {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: #3498db;
+        }
+
+        .download-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .download-icon {
+            width: 60px;
+            height: 60px;
+            background: #e1f0ff;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .download-icon i {
+            font-size: 24px;
+            color: #3498db;
+        }
+
+        .download-info {
+            flex: 1;
+        }
+
+        .download-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .download-desc {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .download-btn {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            background: #2980b9;
+        }
+
+        .file-format {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .format-header {
+            padding: 15px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .format-content {
+            padding: 15px;
+        }
+
+        .format-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .format-table th,
+        .format-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .format-table th {
+            background: #f8f9fa;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        .format-table td {
+            color: #666;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fff7e6;
+            border-radius: 6px;
+            color: #666;
+        }
+
+        .note i {
+            color: #f39c12;
+            margin-right: 8px;
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+
+        /* 新增文件类型卡片样式 */
+        .file-types {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .file-type-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .file-type-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-color: #3498db;
+        }
+
+        .file-type-card.active {
+            background: #e1f0ff;
+            border-color: #3498db;
+        }
+
+        .file-type-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .file-type-icon i {
+            font-size: 20px;
+        }
+
+        .file-type-info {
+            flex: 1;
+        }
+
+        .file-type-name {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .file-type-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 文件说明区域样式 */
+        .format-section {
+            display: none;
+        }
+
+        .format-section.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="xiaomei_today_tasks.html" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+            返回任务页面
+        </a>
+
+        <div class="manual-header">
+            <h1>AION 线索文件导入说明</h1>
+            <p>了解如何准备和导入您的线索文件</p>
+        </div>
+
+        <div class="manual-section">
+            <h2 class="section-title">
+                <i class="fas fa-file-alt"></i>
+                选择文件类型
+            </h2>
+            <div class="file-types">
+                <div class="file-type-card active" data-type="excel">
+                    <div class="file-type-icon" style="background: #e1f0ff;">
+                        <i class="fas fa-file-excel" style="color: #3498db;"></i>
+                    </div>
+                    <div class="file-type-info">
+                        <div class="file-type-name">Excel导入模板</div>
+                        <div class="file-type-desc">适用于大批量数据导入，支持.xlsx格式</div>
+                    </div>
+                </div>
+
+                <div class="file-type-card" data-type="csv">
+                    <div class="file-type-icon" style="background: #e8f5e9;">
+                        <i class="fas fa-file-csv" style="color: #2ecc71;"></i>
+                    </div>
+                    <div class="file-type-info">
+                        <div class="file-type-name">CSV导入模板</div>
+                        <div class="file-type-desc">适用于跨平台数据迁移，支持.csv格式</div>
+                    </div>
+                </div>
+
+                <div class="file-type-card" data-type="json">
+                    <div class="file-type-icon" style="background: #fff3e0;">
+                        <i class="fas fa-file-code" style="color: #f39c12;"></i>
+                    </div>
+                    <div class="file-type-info">
+                        <div class="file-type-name">JSON导入模板</div>
+                        <div class="file-type-desc">适用于API对接，支持.json格式</div>
+                    </div>
+                </div>
+
+                <div class="file-type-card" data-type="txt">
+                    <div class="file-type-icon" style="background: #fce4ec;">
+                        <i class="fas fa-file-alt" style="color: #e91e63;"></i>
+                    </div>
+                    <div class="file-type-info">
+                        <div class="file-type-name">文本导入模板</div>
+                        <div class="file-type-desc">适用于简单数据导入，支持.txt格式</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Excel格式说明 -->
+        <div id="excel-format" class="format-section active">
+            <div class="manual-section">
+                <h2 class="section-title">
+                    <i class="fas fa-download"></i>
+                    下载Excel模板
+                </h2>
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="download-info">
+                        <div class="download-title">Excel格式导入模板</div>
+                        <div class="download-desc">包含所有必要字段和示例数据，支持批量导入</div>
+                    </div>
+                    <a href="assets/templates/excel_template.xlsx" download class="download-btn">
+                        <i class="fas fa-download"></i>
+                        下载模板
+                    </a>
+                </div>
+                <div class="file-format">
+                    <div class="format-header">Excel文件格式要求</div>
+                    <div class="format-content">
+                        <table class="format-table">
+                            <thead>
+                                <tr>
+                                    <th>字段名</th>
+                                    <th>说明</th>
+                                    <th>格式要求</th>
+                                    <th>示例</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>手机号码</td>
+                                    <td>客户联系电话</td>
+                                    <td>11位数字</td>
+                                    <td>13812345678</td>
+                                </tr>
+                                <tr>
+                                    <td>姓名</td>
+                                    <td>客户姓名</td>
+                                    <td>中文/英文</td>
+                                    <td>张三</td>
+                                </tr>
+                                <tr>
+                                    <td>性别</td>
+                                    <td>客户性别</td>
+                                    <td>男/女</td>
+                                    <td>男</td>
+                                </tr>
+                                <tr>
+                                    <td>年龄</td>
+                                    <td>客户年龄</td>
+                                    <td>数字</td>
+                                    <td>35</td>
+                                </tr>
+                                <tr>
+                                    <td>城市</td>
+                                    <td>所在城市</td>
+                                    <td>中文</td>
+                                    <td>北京</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSV格式说明 -->
+        <div id="csv-format" class="format-section">
+            <div class="manual-section">
+                <h2 class="section-title">
+                    <i class="fas fa-download"></i>
+                    下载CSV模板
+                </h2>
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fas fa-file-csv"></i>
+                    </div>
+                    <div class="download-info">
+                        <div class="download-title">CSV格式导入模板</div>
+                        <div class="download-desc">通用格式，支持跨平台使用</div>
+                    </div>
+                    <a href="assets/templates/csv_template.csv" download class="download-btn">
+                        <i class="fas fa-download"></i>
+                        下载模板
+                    </a>
+                </div>
+                <div class="file-format">
+                    <div class="format-header">CSV文件格式要求</div>
+                    <div class="format-content">
+                        <table class="format-table">
+                            <thead>
+                                <tr>
+                                    <th>要求项</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>文件编码</td>
+                                    <td>UTF-8</td>
+                                </tr>
+                                <tr>
+                                    <td>分隔符</td>
+                                    <td>英文逗号(,)</td>
+                                </tr>
+                                <tr>
+                                    <td>首行要求</td>
+                                    <td>必须包含字段头</td>
+                                </tr>
+                                <tr>
+                                    <td>文本限定符</td>
+                                    <td>双引号(")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JSON格式说明 -->
+        <div id="json-format" class="format-section">
+            <div class="manual-section">
+                <h2 class="section-title">
+                    <i class="fas fa-download"></i>
+                    下载JSON模板
+                </h2>
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fas fa-file-code"></i>
+                    </div>
+                    <div class="download-info">
+                        <div class="download-title">JSON格式导入模板</div>
+                        <div class="download-desc">适用于API对接场景</div>
+                    </div>
+                    <a href="assets/templates/json_template.json" download class="download-btn">
+                        <i class="fas fa-download"></i>
+                        下载模板
+                    </a>
+                </div>
+                <div class="file-format">
+                    <div class="format-header">JSON数据格式示例</div>
+                    <div class="format-content">
+                        <pre style="background: #f8f9fa; padding: 15px; border-radius: 6px; overflow-x: auto;">
+{
+    "leads": [
+        {
+            "phone": "13812345678",
+            "name": "张三",
+            "gender": "男",
+            "age": 35,
+            "city": "北京"
+        }
+    ]
+}</pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文本格式说明 -->
+        <div id="txt-format" class="format-section">
+            <div class="manual-section">
+                <h2 class="section-title">
+                    <i class="fas fa-download"></i>
+                    下载文本模板
+                </h2>
+                <div class="download-card">
+                    <div class="download-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="download-info">
+                        <div class="download-title">文本格式导入模板</div>
+                        <div class="download-desc">简单文本格式，适用于基础数据导入</div>
+                    </div>
+                    <a href="assets/templates/txt_template.txt" download class="download-btn">
+                        <i class="fas fa-download"></i>
+                        下载模板
+                    </a>
+                </div>
+                <div class="file-format">
+                    <div class="format-header">文本文件格式要求</div>
+                    <div class="format-content">
+                        <table class="format-table">
+                            <thead>
+                                <tr>
+                                    <th>要求项</th>
+                                    <th>说明</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>文件编码</td>
+                                    <td>UTF-8</td>
+                                </tr>
+                                <tr>
+                                    <td>分隔符</td>
+                                    <td>竖线(|)</td>
+                                </tr>
+                                <tr>
+                                    <td>每行格式</td>
+                                    <td>手机号|姓名|性别|年龄|城市</td>
+                                </tr>
+                                <tr>
+                                    <td>示例</td>
+                                    <td>13812345678|张三|男|35|北京</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 通用导入建议 -->
+        <div class="manual-section">
+            <h2 class="section-title">
+                <i class="fas fa-lightbulb"></i>
+                导入建议
+            </h2>
+            <ul style="list-style: none; padding-left: 20px;">
+                <li style="margin-bottom: 10px;">
+                    <i class="fas fa-check" style="color: #2ecc71; margin-right: 10px;"></i>
+                    建议每次导入的数据量不超过10000条
+                </li>
+                <li style="margin-bottom: 10px;">
+                    <i class="fas fa-check" style="color: #2ecc71; margin-right: 10px;"></i>
+                    导入前请检查数据格式是否符合要求
+                </li>
+                <li style="margin-bottom: 10px;">
+                    <i class="fas fa-check" style="color: #2ecc71; margin-right: 10px;"></i>
+                    确保文件编码为UTF-8格式
+                </li>
+                <li style="margin-bottom: 10px;">
+                    <i class="fas fa-check" style="color: #2ecc71; margin-right: 10px;"></i>
+                    建议在非高峰时段进行大批量数据导入
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // 文件类型切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileTypeCards = document.querySelectorAll('.file-type-card');
+            const formatSections = document.querySelectorAll('.format-section');
+
+            fileTypeCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    // 移除所有卡片的active类
+                    fileTypeCards.forEach(c => c.classList.remove('active'));
+                    // 为当前卡片添加active类
+                    this.classList.add('active');
+
+                    // 隐藏所有格式说明
+                    formatSections.forEach(section => section.classList.remove('active'));
+                    // 显示对应的格式说明
+                    const formatType = this.getAttribute('data-type');
+                    document.getElementById(`${formatType}-format`).classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

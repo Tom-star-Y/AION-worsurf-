@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION AI客服工作台 - 服务记录</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --hover-color: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --icon-gradient-start: #dcfce7;
+            --icon-gradient-end: #bbf7d0;
+            --icon-color: #16a34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-md);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 70px;
+        }
+
+        .back-to-home {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-right: 16px;
+        }
+
+        .back-to-home:hover {
+            background-color: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        .back-to-home i {
+            font-size: 14px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            height: 36px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            background: var(--icon-gradient-start);
+            color: var(--icon-color);
+            font-size: 13px;
+        }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            padding: 90px 0 20px;
+            z-index: 90;
+        }
+
+        .nav-item {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .nav-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .nav-item span {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover {
+            background-color: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--icon-gradient-start), var(--icon-gradient-end));
+            color: var(--icon-color);
+        }
+
+        .nav-item.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 20px;
+            background-color: var(--icon-color);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .main-container {
+            padding: 90px 24px 24px 264px;
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--icon-color);
+            font-weight: 500;
+        }
+
+        .breadcrumb-item i {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .breadcrumb-item a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .analytics-card {
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .agent-profile-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .agent-avatar-large {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .agent-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .agent-info-large {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .agent-name-large {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-title-large {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .cost-analysis {
+            grid-column: span 9;
+        }
+
+        .efficiency-comparison {
+            grid-column: span 3;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .analytics-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .analytics-filters {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: var(--background-color);
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .filter-btn:hover {
+            background: var(--hover-color);
+            color: var(--primary-color);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .metric-card {
+            background: var(--background-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .records-section {
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            margin-top: 24px;
+        }
+
+        .records-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .search-filters {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--background-color);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+        }
+
+        .filter-select {
+            padding: 8px 32px 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--background-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+        }
+
+        .records-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .records-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .records-table td {
+            padding: 16px;
+            font-size: 14px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .customer-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: var(--background-color);
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .priority-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .priority-high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority-medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority-low {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: var(--background-color);
+            color: var(--primary-color);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn i {
+            font-size: 14px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            gap: 8px;
+        }
+
+        .page-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            background: var(--background-color);
+            color: var(--text-secondary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .page-btn:hover {
+            background: var(--hover-color);
+            color: var(--primary-color);
+        }
+
+        .page-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .user-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        #efficiencyComparisonChart {
+            width: 100%;
+            height: 180px;
+            margin-top: 10px;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .export-btn i {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="side-nav">
+        <div class="nav-group">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>首页</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <div class="nav-group-title">工作台切换</div>
+            <a href="customer_service.html" class="nav-item active">
+                <i class="fas fa-user-tie"></i>
+                <span>小明工作台</span>
+            </a>
+            <a href="xiaomei_today_tasks.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>小美工作台</span>
+            </a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">客服功能</div>
+            <a href="customer_service.html" class="nav-item sub-item">
+                <i class="fas fa-headset"></i>
+                <span>客服中心</span>
+                <i class="fas fa-chevron-down" style="margin-left: auto; font-size: 12px;"></i>
+            </a>
+            <div class="sub-menu" style="display: block;">
+                <a href="service_records.html" class="nav-item sub-item active" style="padding-left: 44px;">
+                    <i class="fas fa-history"></i>
+                    <span>服务记录</span>
+                </a>
+                <a href="ticket_management.html" class="nav-item sub-item" style="padding-left: 44px;">
+                    <i class="fas fa-ticket-alt"></i>
+                    <span>工单管理</span>
+                </a>
+            </div>
+            <a href="customers.html" class="nav-item sub-item">
+                <i class="fas fa-users"></i>
+                <span>客户管理</span>
+            </a>
+        </div>
+    </nav>
+
+    <header class="header">
+        <div style="display: flex; align-items: center;">
+            <div class="logo">
+                <img src="AION LOGO.png" alt="AION Logo">
+                <h1>智能客服工作台</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="breadcrumb">
+            <div class="breadcrumb-item">
+                <i class="fas fa-home"></i>
+                <a href="index.html">员工大厅</a>
+            </div>
+            <div class="breadcrumb-item">
+                <i class="fas fa-chevron-right"></i>
+                <a href="customer_service.html">小明工作台</a>
+            </div>
+            <div class="breadcrumb-item active">
+                <i class="fas fa-chevron-right"></i>
+                服务记录
+            </div>
+        </div>
+
+        <div class="analytics-grid">
+            <div class="analytics-card cost-analysis">
+                <div class="agent-profile-section">
+                    <div class="agent-avatar-large">
+                        <img src="张小明.png" alt="张小明">
+                    </div>
+                    <div class="agent-info-large">
+                        <span class="agent-name-large">张小明</span>
+                        <span class="agent-title-large">客服专员 - 服务记录</span>
+                    </div>
+                </div>
+                <div class="analytics-header">
+                    <h3 class="analytics-title">成本效益分析</h3>
+                    <div class="analytics-filters">
+                        <button class="filter-btn active">日</button>
+                        <button class="filter-btn">周</button>
+                        <button class="filter-btn">月</button>
+                        <button class="filter-btn">季</button>
+                    </div>
+                </div>
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-label">人工处理成本</div>
+                        <div class="metric-value">¥12,458</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">AI处理成本</div>
+                        <div class="metric-value">¥2,845</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">成本节省</div>
+                        <div class="metric-value">¥9,613</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-label">ROI</div>
+                        <div class="metric-value">338%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analytics-card efficiency-comparison">
+                <div class="analytics-header">
+                    <h3 class="analytics-title">效率对比</h3>
+                </div>
+                <div id="efficiencyComparisonChart"></div>
+            </div>
+        </div>
+
+        <div class="records-section">
+            <div class="records-header">
+                <div class="search-filters">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="搜索服务记录...">
+                    </div>
+                    <select class="filter-select">
+                        <option value="">问题类型</option>
+                        <option value="product">产品咨询</option>
+                        <option value="technical">技术支持</option>
+                        <option value="account">账户问题</option>
+                        <option value="complaint">投诉建议</option>
+                    </select>
+                    <select class="filter-select">
+                        <option value="">处理状态</option>
+                        <option value="pending">待处理</option>
+                        <option value="processing">处理中</option>
+                        <option value="completed">已完成</option>
+                    </select>
+                    <select class="filter-select">
+                        <option value="">处理方式</option>
+                        <option value="ai">AI处理</option>
+                        <option value="manual">人工处理</option>
+                        <option value="mixed">混合处理</option>
+                    </select>
+                </div>
+                <button class="export-btn">
+                    <i class="fas fa-download"></i>
+                    导出记录
+                </button>
+            </div>
+
+            <table class="records-table">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>接听时间</th>
+                        <th>电话号码</th>
+                        <th>客户姓名</th>
+                        <th>客户画像</th>
+                        <th>问题类型</th>
+                        <th>紧急程度</th>
+                        <th>处理阶段</th>
+                        <th>解决方案</th>
+                        <th>对话记录</th>
+                        <th>工单信息</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- 动态生成的记录行 -->
+                </tbody>
+            </table>
+
+            <div class="pagination">
+                <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">10</button>
+                <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 效率对比图表
+            const efficiencyComparisonChart = echarts.init(document.getElementById('efficiencyComparisonChart'));
+            const efficiencyComparisonOption = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} ({d}%)'
+                },
+                legend: {
+                    orient: 'horizontal',
+                    bottom: 0,
+                    left: 'center',
+                    itemWidth: 8,
+                    itemHeight: 8,
+                    textStyle: {
+                        fontSize: 12
+                    }
+                },
+                series: [
+                    {
+                        name: '处理效率',
+                        type: 'pie',
+                        radius: ['45%', '75%'],
+                        center: ['50%', '40%'],
+                        avoidLabelOverlap: false,
+                        itemStyle: {
+                            borderRadius: 6,
+                            borderColor: '#fff',
+                            borderWidth: 2
+                        },
+                        label: {
+                            show: false
+                        },
+                        labelLine: {
+                            show: false
+                        },
+                        color: ['#3b82f6', '#22c55e', '#f59e0b'],
+                        data: [
+                            { value: 1048, name: 'AI处理' },
+                            { value: 735, name: '人工处理' },
+                            { value: 580, name: '混合处理' }
+                        ]
+                    }
+                ]
+            };
+            efficiencyComparisonChart.setOption(efficiencyComparisonOption);
+
+            // 响应式调整
+            window.addEventListener('resize', function() {
+                efficiencyComparisonChart.resize();
+            });
+
+            // 模拟数据生成
+            const generateRecords = () => {
+                const tbody = document.querySelector('.records-table tbody');
+                const records = [];
+
+                for (let i = 1; i <= 10; i++) {
+                    const record = `
+                        <tr>
+                            <td>${i}</td>
+                            <td>${new Date().toLocaleTimeString()}</td>
+                            <td>138****${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}</td>
+                            <td>客户${i}</td>
+                            <td>
+                                <div class="customer-profile">
+                                    <i class="fas fa-user-circle"></i>
+                                    <span>${Math.random() > 0.5 ? '高频客户' : '新客户'}</span>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="customer-profile">
+                                    ${['产品咨询', '技术支持', '账户问题'][Math.floor(Math.random() * 3)]}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="priority-tag ${['priority-high', 'priority-medium', 'priority-low'][Math.floor(Math.random() * 3)]}">
+                                    ${['紧急', '中等', '普通'][Math.floor(Math.random() * 3)]}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="customer-profile">
+                                    ${['处理中', '已完成', '待处理'][Math.floor(Math.random() * 3)]}
+                                </div>
+                            </td>
+                            <td>解决方案${i}</td>
+                            <td>
+                                ${Math.random() > 0.3 ? '<button class="action-btn"><i class="fas fa-comments"></i></button>' : ''}
+                            </td>
+                            <td>
+                                ${Math.random() > 0.3 ? '<button class="action-btn"><i class="fas fa-ticket-alt"></i></button>' : ''}
+                            </td>
+                        </tr>
+                    `;
+                    records.push(record);
+                }
+
+                tbody.innerHTML = records.join('');
+            };
+
+            generateRecords();
+
+            // 添加菜单折叠/展开功能
+            const customerServiceLink = document.querySelector('.nav-item.sub-item i.fa-chevron-down').parentElement;
+            const subMenu = document.querySelector('.sub-menu');
+            
+            customerServiceLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const chevronIcon = this.querySelector('.fa-chevron-down');
+                chevronIcon.style.transform = subMenu.style.display === 'none' ? 'rotate(180deg)' : 'rotate(0deg)';
+                subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .nav-item i.fa-chevron-down {
+                    transition: transform 0.3s ease;
+                }
+                .sub-menu {
+                    transition: all 0.3s ease;
+                }
+            `;
+            document.head.appendChild(style);
+
+            // 由于这是服务记录页面，我们需要展开子菜单
+            subMenu.style.display = 'block';
+            customerServiceLink.querySelector('.fa-chevron-down').style.transform = 'rotate(180deg)';
+        });
+    </script>
+</body>
+</html>

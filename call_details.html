@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>外呼详情 - AION</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 70px;
+        }
+
+        .back-to-home {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background-color: #f5f7fa;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-right: 16px;
+        }
+
+        .back-to-home:hover {
+            background-color: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 40px;
+            margin-right: 10px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .main-container {
+            margin-top: 90px;
+            padding: 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tabs {
+            display: flex;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .tab:hover {
+            background-color: #f8fafc;
+        }
+
+        .tab.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+            background-color: #f8fafc;
+        }
+
+        .tab-content {
+            display: none;
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .call-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .call-table th,
+        .call-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .call-table th {
+            background-color: #f8fafc;
+            font-weight: 500;
+            color: #64748b;
+        }
+
+        .call-table tr:hover {
+            background-color: #f8fafc;
+        }
+
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background-color: #e6f4ea;
+            color: #1e8e3e;
+        }
+
+        .status-running {
+            background-color: #e1f0ff;
+            color: #3498db;
+        }
+
+        .status-waiting {
+            background-color: #fff7e6;
+            color: #f39c12;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+
+        .pagination button {
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pagination button:hover {
+            background-color: #f8fafc;
+        }
+
+        .pagination button.active {
+            background-color: #3498db;
+            color: #fff;
+            border-color: #3498db;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .search-btn {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background-color: #2980b9;
+        }
+
+        .export-btn {
+            padding: 10px 20px;
+            background-color: #2ecc71;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .export-btn:hover {
+            background-color: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div style="display: flex; align-items: center;">
+            <a href="xiaomei_today_tasks.html" class="back-to-home">
+                <i class="fas fa-arrow-left"></i>
+                <span>返回任务面板</span>
+            </a>
+            <div class="logo">
+                <img src="AION LOGO.png" alt="AION Logo">
+                <h1>外呼详情</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="tabs">
+            <div class="tab active" data-tab="completed">已完成外呼</div>
+            <div class="tab" data-tab="running">正在外呼</div>
+            <div class="tab" data-tab="waiting">等待外呼</div>
+        </div>
+
+        <!-- 已完成外呼 -->
+        <div class="tab-content active" id="completed">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索电话号码、状态等...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+                <button class="export-btn">
+                    <i class="fas fa-download"></i>
+                    导出数据
+                </button>
+            </div>
+            <table class="call-table">
+                <thead>
+                    <tr>
+                        <th>电话号码</th>
+                        <th>状态</th>
+                        <th>通话时长</th>
+                        <th>完成时间</th>
+                        <th>通话结果</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>138****8888</td>
+                        <td><span class="status-badge status-success">已接通</span></td>
+                        <td>2分35秒</td>
+                        <td>2025-03-05 14:28:10</td>
+                        <td>成功</td>
+                        <td><a href="#" style="color: #3498db;">查看详情</a></td>
+                    </tr>
+                    <!-- 更多数据行 -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button>&lt;</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>&gt;</button>
+            </div>
+        </div>
+
+        <!-- 正在外呼 -->
+        <div class="tab-content" id="running">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索电话号码、状态等...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+            </div>
+            <table class="call-table">
+                <thead>
+                    <tr>
+                        <th>电话号码</th>
+                        <th>状态</th>
+                        <th>已用时长</th>
+                        <th>开始时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>135****5555</td>
+                        <td><span class="status-badge status-running">通话中</span></td>
+                        <td>30秒</td>
+                        <td>2025-03-05 14:28:40</td>
+                        <td><a href="#" style="color: #3498db;">实时监听</a></td>
+                    </tr>
+                    <!-- 更多数据行 -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button>&lt;</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>&gt;</button>
+            </div>
+        </div>
+
+        <!-- 等待外呼 -->
+        <div class="tab-content" id="waiting">
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="搜索电话号码、状态等...">
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                    搜索
+                </button>
+            </div>
+            <table class="call-table">
+                <thead>
+                    <tr>
+                        <th>电话号码</th>
+                        <th>状态</th>
+                        <th>加入时间</th>
+                        <th>预计开始时间</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>134****4444</td>
+                        <td><span class="status-badge status-waiting">等待中</span></td>
+                        <td>2025-03-05 14:28:10</td>
+                        <td>2025-03-05 14:35:00</td>
+                        <td><a href="#" style="color: #3498db;">调整优先级</a></td>
+                    </tr>
+                    <!-- 更多数据行 -->
+                </tbody>
+            </table>
+            <div class="pagination">
+                <button>&lt;</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>&gt;</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // 标签切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // 移除所有活动状态
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.classList.remove('active'));
+
+                    // 添加当前标签的活动状态
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab');
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            // 获取URL参数
+            const urlParams = new URLSearchParams(window.location.search);
+            const activeTab = urlParams.get('tab');
+
+            // 如果URL中有指定标签，则激活对应标签
+            if (activeTab) {
+                const targetTab = document.querySelector(`.tab[data-tab="${activeTab}"]`);
+                if (targetTab) {
+                    targetTab.click();
+                }
+            }
+
+            // 搜索功能
+            document.querySelectorAll('.search-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const searchInput = this.previousElementSibling;
+                    const searchTerm = searchInput.value.trim();
+                    if (searchTerm) {
+                        alert(`搜索: ${searchTerm}`);
+                        // 这里可以添加实际的搜索逻辑
+                    }
+                });
+            });
+
+            // 导出功能
+            const exportBtn = document.querySelector('.export-btn');
+            if (exportBtn) {
+                exportBtn.addEventListener('click', function() {
+                    alert('开始导出数据...');
+                    // 这里可以添加实际的导出逻辑
+                });
+            }
+
+            // 分页功能
+            document.querySelectorAll('.pagination button').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        const currentPage = this.parentElement.querySelector('.active');
+                        if (currentPage) {
+                            currentPage.classList.remove('active');
+                        }
+                        this.classList.add('active');
+                        // 这里可以添加实际的分页逻辑
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AION AI客服工作台 - 张小明</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-light: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #22c55e;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --hover-color: #f1f5f9;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --icon-gradient-start: #dcfce7;
+            --icon-gradient-end: #bbf7d0;
+            --icon-color: #16a34a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-md);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            height: 70px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo img {
+            height: 36px;
+        }
+
+        .logo h1 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo h1::after {
+            content: "小明工作台";
+            background: linear-gradient(135deg, var(--icon-gradient-start), var(--icon-gradient-end));
+            color: var(--icon-color);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+
+        .side-nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 240px;
+            height: 100vh;
+            background-color: var(--card-background);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            flex-direction: column;
+            padding: 90px 0 20px;
+            z-index: 90;
+        }
+
+        .nav-group {
+            margin-bottom: 16px;
+        }
+
+        .nav-group-title {
+            padding: 8px 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-item {
+            width: 100%;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            position: relative;
+            text-decoration: none;
+        }
+
+        .nav-item.sub-item {
+            padding-left: 44px;
+            height: 40px;
+            font-size: 13px;
+        }
+
+        .nav-item i {
+            width: 24px;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .nav-item.sub-item i {
+            font-size: 14px;
+        }
+
+        .nav-item:hover {
+            background-color: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--icon-gradient-start), var(--icon-gradient-end));
+            color: var(--icon-color);
+        }
+
+        .nav-item.active::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            width: 4px;
+            height: 20px;
+            background-color: var(--icon-color);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .main-container {
+            padding: 140px 24px 24px 264px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--card-background);
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            position: fixed;
+            top: 70px;
+            left: 240px;
+            right: 24px;
+            z-index: 89;
+            margin: 0;
+        }
+
+        .breadcrumb-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--icon-color);
+            font-weight: 500;
+        }
+
+        .breadcrumb-item i {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            left: 70px;
+            background: var(--card-background);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-md);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+            border: 1px solid var(--border-color);
+        }
+
+        .nav-item:hover .nav-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(5px);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+
+        .kpi-cards {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .kpi-card {
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .kpi-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--icon-gradient-start), var(--icon-gradient-end));
+            color: var(--icon-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .kpi-content {
+            flex: 1;
+        }
+
+        .kpi-value {
+            font-size: 28px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .trend-charts {
+            grid-column: span 2;
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .trend-charts::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(66, 133, 244, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .trend-charts .chart-container {
+            height: 150px !important;
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            min-height: 150px;
+        }
+
+        .chart-header.compact {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-header h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .chart-header h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: #4285f4;
+            border-radius: 2px;
+        }
+
+        .funnel-info {
+            position: absolute;
+            top: 10px;
+            right: 16px;
+            font-size: 12px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .funnel-info i {
+            color: #4285f4;
+            font-size: 14px;
+        }
+
+        .warning-section {
+            grid-column: span 4;
+            background: var(--card-background);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .warning-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .warning-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 12px;
+            background: var(--hover-color);
+        }
+
+        .warning-item.high {
+            background: #fee2e2;
+        }
+
+        .warning-item.medium {
+            background: #fef3c7;
+        }
+
+        .warning-item.low {
+            background: #dcfce7;
+        }
+
+        .warning-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--card-background);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .warning-item.high .warning-icon {
+            color: var(--danger-color);
+        }
+
+        .warning-item.medium .warning-icon {
+            color: var(--warning-color);
+        }
+
+        .warning-item.low .warning-icon {
+            color: var(--success-color);
+        }
+
+        .warning-content {
+            flex: 1;
+        }
+
+        .warning-title {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .warning-detail {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .warning-time {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .analysis-grid {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .chart-section {
+            background: linear-gradient(145deg, #ffffff, #f8fafc);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-section::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(66, 133, 244, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .chart-header.compact {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-header h3 {
+            font-size: 15px;
+            color: #1a1a1a;
+            font-weight: 600;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .chart-header h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: #4285f4;
+            border-radius: 2px;
+        }
+
+        .chart-container {
+            height: 120px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            min-height: 120px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .section-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 18px;
+            color: var(--text-primary);
+        }
+
+        .warning-count {
+            padding: 4px 12px;
+            border-radius: 20px;
+            background: var(--danger-color);
+            color: white;
+            font-size: 13px;
+        }
+
+        .control-bar {
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: var(--card-background);
+            border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            height: 56px;
+            gap: 0;
+        }
+
+        .time-filter {
+            display: flex;
+            gap: 0;
+            background: var(--hover-color);
+            padding: 1px;
+            border-radius: 4px;
+            margin: 0 4px;
+        }
+
+        .time-btn {
+            padding: 3px 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s ease;
+        }
+
+        .time-btn.active {
+            background: var(--card-background);
+            color: var(--text-primary);
+        }
+
+        .quick-stats {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 1 auto;
+            padding: 0 8px;
+            position: relative;
+            justify-content: flex-start;
+            min-width: auto;
+            flex-grow: 1;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            min-width: 35px;
+            padding: 0 2px;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 9px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .stat-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .quick-stats .export-btn {
+            margin-left: 8px;
+            background-color: var(--hover-color);
+            width: 28px;
+            height: 28px;
+        }
+        
+        .quick-stats .export-btn:hover {
+            background-color: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+
+        .alerts-wrapper {
+            display: flex;
+            gap: 8px;
+        }
+
+        .alert-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .alert-item.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .alert-item.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .alert-item.low {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .export-btn {
+            width: 24px;
+            height: 24px;
+            padding: 0;
+            border: none;
+            background: var(--hover-color);
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            margin-left: 4px;
+        }
+
+        .export-btn:hover {
+            background: var(--hover-color);
+            color: var(--text-primary);
+        }
+        
+        .export-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 120px;
+            background: var(--card-background);
+            border-radius: 6px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-color);
+            padding: 8px 0;
+            z-index: 100;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.2s ease;
+        }
+        
+        .export-btn:hover .export-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(5px);
+        }
+        
+        .export-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            transition: all 0.2s ease;
+        }
+        
+        .export-option:hover {
+            background: var(--hover-color);
+            color: var(--text-primary);
+        }
+
+        .charts-container {
+            margin-top: 16px;
+        }
+
+        .charts-row {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+        }
+
+        .chart-section {
+            background: var(--card-background);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-header.compact {
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chart-header h3 {
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+            position: relative;
+            padding-left: 12px;
+        }
+
+        .chart-header h3::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 16px;
+            background: #4285f4;
+            border-radius: 2px;
+        }
+
+        .chart-container {
+            height: 120px;
+            width: 100%;
+            min-height: 120px;
+        }
+
+        .chart-container#trendChart {
+            height: 140px !important;
+        }
+        
+        #regionHeatmap {
+            height: 350px !important;
+            margin-top: 5px;
+        }
+        
+        .service-analysis-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .service-analysis-grid .chart-container {
+            height: 110px;
+        }
+
+        .breadcrumb-item a {
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-color);
+        }
+
+        .nav-item {
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            background-color: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, var(--icon-gradient-start), var(--icon-gradient-end));
+            color: var(--icon-color);
+        }
+
+        .records-section {
+            margin-top: 24px;
+            background: var(--card-background);
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .section-tabs {
+            display: flex;
+            gap: 2px;
+            padding: 16px 16px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .tab-btn {
+            padding: 8px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px 6px 0 0;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            background: var(--card-background);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-color);
+        }
+
+        .records-header {
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 320px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 12px 8px 36px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: var(--background-color);
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background: var(--card-background);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-select {
+            padding: 8px 32px 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--text-primary);
+            background: var(--background-color);
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            transition: all 0.2s ease;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            background-color: var(--card-background);
+        }
+
+        .records-table {
+            padding: 0 16px 16px;
+            overflow-x: auto;
+        }
+
+        .records-table table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 16px;
+        }
+
+        .records-table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--background-color);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .records-table th:first-child {
+            border-radius: 6px 0 0 6px;
+        }
+
+        .records-table th:last-child {
+            border-radius: 0 6px 6px 0;
+        }
+
+        .records-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            white-space: nowrap;
+        }
+
+        .records-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .records-table tr:hover td {
+            background: var(--hover-color);
+        }
+
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+
+        .priority {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .priority.high {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .priority.medium {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .priority.low {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status.processing {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .status.pending {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .status.completed {
+            background: #dcfce7;
+            color: #16a34a;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #f59e0b;
+        }
+
+        .rating i {
+            font-size: 12px;
+        }
+
+        .action-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--hover-color);
+            color: var(--primary-color);
+        }
+
+        .tab-content {
+            min-height: 400px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .customer-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--background-color);
+            color: var(--text-secondary);
+            cursor: help;
+        }
+
+        .customer-profile i {
+            font-size: 14px;
+            color: var(--primary-color);
+        }
+
+        .phase {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--background-color);
+            color: var(--text-secondary);
+        }
+
+        .solution-preview {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .action-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-group .action-btn {
+            width: 24px;
+            height: 24px;
+        }
+
+        .records-table td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .agent-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px;
+            border-radius: 8px;
+            background: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .agent-profile:hover {
+            background: var(--hover-color);
+        }
+
+        .agent-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .agent-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .agent-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .agent-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .agent-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .ai-status {
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            padding: 3px 6px;
+            border-radius: 4px;
+            background: var(--icon-gradient-start);
+            color: var(--icon-color);
+            font-size: 11px;
+            white-space: nowrap;
+            margin: 0 4px;
+        }
+
+        .view-more-btn {
+            background: var(--background-color);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 auto;
+            transition: all 0.2s ease;
+        }
+
+        .view-more-btn:hover {
+            background: var(--hover-color);
+            color: var(--primary-color);
+        }
+
+        .view-more-btn i {
+            font-size: 12px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 4px;
+            border-radius: 8px;
+            background: var(--background-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: var(--hover-color);
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .user-title {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .agent-profile-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .agent-avatar-large {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .agent-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .agent-info-large {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+
+        .agent-name-large {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-title-large {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        .service-status {
+            position: absolute;
+            right: 8px;
+            top: 4px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            min-width: 200px;
+        }
+
+        .service-days {
+            font-size: 10px;
+            color: #16a34a;
+            white-space: nowrap;
+            background: rgba(22, 163, 74, 0.1);
+            padding: 2px 8px;
+            border-radius: 3px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .service-balance-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+
+        .service-balance {
+            font-size: 10px;
+            color: #16a34a;
+            white-space: nowrap;
+            background: rgba(22, 163, 74, 0.1);
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .charge-btn {
+            padding: 2px 8px;
+            border: none;
+            background: #16a34a;
+            color: white;
+            border-radius: 3px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .charge-btn:hover {
+            background: #15803d;
+        }
+
+        .agent-profile-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            min-width: 280px;
+            position: relative;
+        }
+
+        .control-bar {
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            background: var(--card-background);
+            border-radius: 6px;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 16px;
+            height: 56px;
+            gap: 0;
+            justify-content: space-between;
+        }
+
+        .quick-stats {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex: 0 1 auto;
+            padding: 0 8px;
+            position: relative;
+            justify-content: flex-start;
+            min-width: auto;
+            flex-grow: 1;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1px;
+            min-width: 35px;
+            padding: 0 2px;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+        }
+
+        .stat-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-avatar-large {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid var(--icon-gradient-end);
+        }
+
+        .agent-avatar-large img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .agent-info-large {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .agent-name-large {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .agent-title-large {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .map-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .map-control-btn {
+            padding: 4px 8px;
+            border: none;
+            background: var(--background-color);
+            border-radius: 4px;
+            color: var(--text-secondary);
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .map-control-btn:hover {
+            background: var(--hover-color);
+            color: var(--primary-color);
+        }
+        
+        .map-control-btn:active {
+            background: var(--icon-gradient-start);
+            color: var(--icon-color);
+        }
+        
+        #regionHeatmap {
+            height: 350px !important;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="side-nav">
+        <div class="nav-group">
+            <a href="index.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>员工中心</span>
+            </a>
+        </div>
+        
+        <div class="nav-group">
+            <div class="nav-group-title">工作台切换</div>
+            <a href="xiaomei_today_tasks.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>小美工作台</span>
+            </a>
+            <a href="customer_service.html" class="nav-item active">
+                <i class="fas fa-user-tie"></i>
+                <span>小明工作台</span>
+            </a>
+        </div>
+
+        <div class="nav-group">
+            <div class="nav-group-title">客户管理系统</div>
+            <a href="crm.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>客户管理</span>
+            </a>
+        </div>
+    </nav>
+
+    <header class="header">
+        <div style="display: flex; align-items: center;">
+            <div class="logo">
+                <img src="AION LOGO.png" alt="AION Logo">
+                <h1>智能客服工作台</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-container">
+        <div class="breadcrumb">
+            <div class="breadcrumb-item">
+                <i class="fas fa-home"></i>
+                <a href="index.html">员工中心</a>
+            </div>
+            <div class="breadcrumb-item">
+                <i class="fas fa-chevron-right"></i>
+                <a href="customer_service.html">小亮工作台</a>
+            </div>
+            <div class="breadcrumb-item active">
+                <i class="fas fa-chevron-right"></i>
+                客户管理系统
+            </div>
+        </div>
+
+        <div class="service-analytics">
+            <div class="control-bar">
+                <div class="agent-profile-section">
+                    <div class="agent-avatar-large">
+                        <img src="张小明.png" alt="张小明">
+                    </div>
+                    <div class="agent-info-large">
+                        <span class="agent-name-large">张小明</span>
+                        <span class="agent-title-large">客服专员</span>
+                    </div>
+                    <div style="margin-left: 20px; font-size: 13px; color: #666;">
+                        已经连续守护您和您的客户<span style="color: #22c55e;">9999</span>个小时，处理了<span style="color: #22c55e;">935789</span>通客户来电，创造了<span style="color: #22c55e;">9999</span>个工单，竭诚为您服务
+                    </div>
+                </div>
+                    
+                </div>
+            </div>
+
+            <div class="stats-card" style="flex: 1; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px; margin-bottom: 16px;">
+                <!-- 工作报告卡片和时间选择器并排 -->
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <i class="fas fa-file-alt" style="color: #3498db; font-size: 20px;"></i>
+                        <span style="font-size: 16px; font-weight: 500; color: #2c3e50;">工作报告</span>
+                    </div>
+                    <div style="display: flex; align-items: center;">
+                        <div class="time-filter" style="margin-right: 8px;">
+                            <button class="time-btn">昨日</button>
+                            <button class="time-btn active">今日</button>
+                            <button class="time-btn">七日</button>
+                            <button class="time-btn">十四日</button>
+                            <button class="time-btn">月</button>
+                            <button class="time-btn">2025/03/16</button>
+                            <button class="time-btn">至</button>
+                            <button class="time-btn">2025/03/16</button>
+                        </div>
+                        <button style="padding: 6px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; color: #666; font-size: 13px; white-space: nowrap;">导出</button>
+                    </div>
+                </div>
+
+                <!-- 统计数据卡片 -->
+                <div style="display: flex; gap: 15px; justify-content: space-between; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid #2ecc71; cursor: pointer;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">服务总量</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #2ecc71;">2458</div>
+                    </div>
+                    
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid #3498db; cursor: pointer;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">已处理量</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #3498db;">2156</div>
+                    </div>
+
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid #e74c3c; cursor: pointer;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">接听响应时长</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #e74c3c;">0.03s</div>
+                    </div>
+
+                    <div style="flex: 1; background: #f8f9fa; padding: 12px; border-radius: 6px; border-left: 3px solid #16a085; cursor: pointer;">
+                        <div style="font-size: 12px; color: #666; margin-bottom: 8px;">解决率</div>
+                        <div style="font-size: 20px; font-weight: 600; color: #16a085;">95%</div>
+                    </div>
+                </div>
+
+                <!-- 来电类型和转人工原因 -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div>
+                        <div class="chart-header compact" style="margin-bottom: 5px;">
+                            <h3 style="font-size: 12px; color: #666;">来电类型</h3>
+                        </div>
+                        <div id="callTypeChart" class="chart-container" style="height: 110px;"></div>
+                    </div>
+                    <div>
+                        <div class="chart-header compact" style="margin-bottom: 5px;">
+                            <h3 style="font-size: 12px; color: #666;">转人工原因</h3>
+                        </div>
+                        <div id="transferReasonChart" class="chart-container" style="height: 110px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <div class="records-section" style="background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); padding: 15px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <button class="tab-btn active" style="font-size: 16px; font-weight: 500; color: #2c3e50; background: none; border: none; padding: 0; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-list" style="color: #3498db; font-size: 20px;"></i>
+                    服务记录
+                </button>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="service-records">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div class="search-box" style="max-width: 260px;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="搜索用户名/电话...">
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <div class="filter-group" style="display: flex; gap: 8px;">
+                                <select class="filter-select" style="width: 100px;">
+                                    <option value="all">全部类型</option>
+                                    <option value="consult">产品咨询</option>
+                                    <option value="technical">技术支持</option>
+                                    <option value="account">账户问题</option>
+                                    <option value="complaint">投诉建议</option>
+                                    <option value="other">其他</option>
+                                </select>
+                                <select class="filter-select" style="width: 100px;">
+                                    <option value="all">紧急程度</option>
+                                    <option value="high">紧急</option>
+                                    <option value="medium">中等</option>
+                                    <option value="low">普通</option>
+                                </select>
+                                <select class="filter-select" style="width: 100px;">
+                                    <option value="all">处理阶段</option>
+                                    <option value="processing">处理中</option>
+                                    <option value="pending">待处理</option>
+                                    <option value="completed">已完成</option>
+                                    <option value="feedback">待反馈</option>
+                                </select>
+                                <select class="filter-select" style="width: 100px;">
+                                    <option value="all">客户类型</option>
+                                    <option value="vip">VIP客户</option>
+                                    <option value="high">高频客户</option>
+                                    <option value="normal">普通客户</option>
+                                    <option value="new">新客户</option>
+                                </select>
+                            </div>
+                            <a href="ticket_management.html" class="view-more-btn" style="text-decoration: none; display: flex; align-items: center; gap: 8px; padding: 6px 12px; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 4px; color: #666; font-size: 13px; white-space: nowrap;">
+                                查看全部工单
+                                <i class="fas fa-chevron-right" style="font-size: 12px;"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="records-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>序号</th>
+                                    <th>接听时间</th>
+                                    <th>电话号码</th>
+                                    <th>客户姓名</th>
+                                    <th>客户画像</th>
+                                    <th>问题类型</th>
+                                    <th>紧急程度</th>
+                                    <th>处理阶段</th>
+                                    <th>解决方案</th>
+                                    <th>对话记录</th>
+                                    <th>工单信息</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>10:30:15</td>
+                                    <td>138****5678</td>
+                                    <td>王先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="高频客户 | 产品深度用户 | 技术敏感">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>高频客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">产品咨询</span></td>
+                                    <td><span class="priority medium">中等</span></td>
+                                    <td><span class="phase">已解决</span></td>
+                                    <td>
+                                        <div class="solution-preview">远程指导完成功能配置</div>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-dialog" style="color: #3b82f6;">
+                                            <i class="fas fa-comments"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-ticket" style="color: #3b82f6;">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>11:15:42</td>
+                                    <td>159****1234</td>
+                                    <td>李女士</td>
+                                    <td>
+                                        <div class="customer-profile" title="新客户 | 首次咨询 | 功能探索">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>新客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">账户问题</span></td>
+                                    <td><span class="priority high">紧急</span></td>
+                                    <td><span class="phase">处理中</span></td>
+                                    <td>
+                                        <div class="solution-preview">账户权限升级处理</div>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-dialog" style="color: #3b82f6;">
+                                            <i class="fas fa-comments"></i>
+                                        </button>
+                                    </td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>14:20:33</td>
+                                    <td>186****9012</td>
+                                    <td>张先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="VIP客户 | 多产品用户 | 决策层">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>VIP客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">技术支持</span></td>
+                                    <td><span class="priority low">普通</span></td>
+                                    <td><span class="phase">待反馈</span></td>
+                                    <td>
+                                        <div class="solution-preview">系统使用培训预约</div>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-dialog" style="color: #3b82f6;">
+                                            <i class="fas fa-comments"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-ticket" style="color: #3b82f6;">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>15:45:18</td>
+                                    <td>135****3456</td>
+                                    <td>陈女士</td>
+                                    <td>
+                                        <div class="customer-profile" title="普通客户 | 稳定使用 | 业务型">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>普通客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">功能建议</span></td>
+                                    <td><span class="priority low">普通</span></td>
+                                    <td><span class="phase">已提交</span></td>
+                                    <td>
+                                        <div class="solution-preview">记录需求提交产品组</div>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-dialog" style="color: #3b82f6;">
+                                            <i class="fas fa-comments"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-ticket" style="color: #3b82f6;">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>16:30:55</td>
+                                    <td>137****7890</td>
+                                    <td>赵先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="高频客户 | 多渠道反馈 | 关注度高">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>高频客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">系统异常</span></td>
+                                    <td><span class="priority high">紧急</span></td>
+                                    <td><span class="phase">处理中</span></td>
+                                    <td>
+                                        <div class="solution-preview">技术团队远程排查</div>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-dialog" style="color: #3b82f6;">
+                                            <i class="fas fa-comments"></i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <button class="action-btn view-ticket" style="color: #3b82f6;">
+                                            <i class="fas fa-ticket-alt"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- 新增分页导航 -->
+                        <div class="pagination" style="display: flex; justify-content: center; align-items: center; gap: 8px; padding: 20px 0;">
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">首页</button>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">上一页</button>
+                            <button class="page-btn active" style="padding: 6px 12px; border: 1px solid #3498db; background: #3498db; border-radius: 4px; color: #fff; font-size: 13px;">1</button>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">2</button>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">3</button>
+                            <span style="color: #666;">...</span>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">89</button>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">下一页</button>
+                            <button class="page-btn" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px;">尾页</button>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span style="color: #666; font-size: 13px;">跳转至</span>
+                                <input type="text" style="width: 50px; padding: 4px 8px; border: 1px solid #e9ecef; border-radius: 4px; font-size: 13px; text-align: center;">
+                                <span style="color: #666; font-size: 13px;">页</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="ticket-records">
+                    <div class="records-header">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="搜索工单...">
+                        </div>
+                        <div class="filter-group">
+                            <select class="filter-select">
+                                <option value="all">问题类型</option>
+                                <option value="product">产品问题</option>
+                                <option value="service">服务问题</option>
+                                <option value="system">系统问题</option>
+                                <option value="other">其他问题</option>
+                            </select>
+                            <select class="filter-select">
+                                <option value="all">紧急程度</option>
+                                <option value="high">紧急</option>
+                                <option value="medium">中等</option>
+                                <option value="low">普通</option>
+                            </select>
+                            <select class="filter-select">
+                                <option value="all">处理阶段</option>
+                                <option value="new">待处理</option>
+                                <option value="processing">处理中</option>
+                                <option value="pending">待反馈</option>
+                                <option value="resolved">已解决</option>
+                                <option value="closed">已关闭</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="records-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>工单号</th>
+                                    <th>状态</th>
+                                    <th>客户姓名</th>
+                                    <th>客户画像</th>
+                                    <th>问题类型</th>
+                                    <th>紧急程度</th>
+                                    <th>处理阶段</th>
+                                    <th>解决方案</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#WO-2024-001</td>
+                                    <td><span class="status processing">处理中</span></td>
+                                    <td>张先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="高频客户 | 产品深度用户 | 技术敏感">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>高频客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">系统配置</span></td>
+                                    <td><span class="priority high">高</span></td>
+                                    <td>方案制定</td>
+                                    <td>
+                                        <div class="solution-preview">远程协助配置系统参数</div>
+                                    </td>
+                                    <td>
+                                        <button onclick="window.location.href='ticket_management.html'" class="action-btn">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            查看详情
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#WO-2024-004</td>
+                                    <td><span class="status pending">待处理</span></td>
+                                    <td>刘先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="企业客户 | 多系统对接 | 技术型">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>企业客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">接口异常</span></td>
+                                    <td><span class="priority high">紧急</span></td>
+                                    <td><span class="phase">问题分析</span></td>
+                                    <td>
+                                        <div class="solution-preview">接口调用异常排查中</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button class="action-btn" title="查看详情">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn" title="编辑工单">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#WO-2024-005</td>
+                                    <td><span class="status completed">已解决</span></td>
+                                    <td>周女士</td>
+                                    <td>
+                                        <div class="customer-profile" title="VIP客户 | 高频使用 | 业务关键">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>VIP客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">数据迁移</span></td>
+                                    <td><span class="priority medium">中等</span></td>
+                                    <td><span class="phase">已完成</span></td>
+                                    <td>
+                                        <div class="solution-preview">完成数据迁移及验证</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button class="action-btn" title="查看详情">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn" title="编辑工单">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#WO-2024-006</td>
+                                    <td><span class="status processing">处理中</span></td>
+                                    <td>郑先生</td>
+                                    <td>
+                                        <div class="customer-profile" title="新客户 | 系统试用 | 决策层">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>新客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">功能配置</span></td>
+                                    <td><span class="priority low">普通</span></td>
+                                    <td><span class="phase">方案执行</span></td>
+                                    <td>
+                                        <div class="solution-preview">个性化功能配置中</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button class="action-btn" title="查看详情">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn" title="编辑工单">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#WO-2024-007</td>
+                                    <td><span class="status pending">待反馈</span></td>
+                                    <td>孙女士</td>
+                                    <td>
+                                        <div class="customer-profile" title="高频客户 | 多产品用户 | 运维型">
+                                            <i class="fas fa-user-circle"></i>
+                                            <span>高频客户</span>
+                                        </div>
+                                    </td>
+                                    <td><span class="tag">性能优化</span></td>
+                                    <td><span class="priority medium">中等</span></td>
+                                    <td><span class="phase">方案确认</span></td>
+                                    <td>
+                                        <div class="solution-preview">系统性能优化方案</div>
+                                    </td>
+                                    <td>
+                                        <div class="action-group">
+                                            <button class="action-btn" title="查看详情">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn" title="编辑工单">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="text-align: center; padding: 16px;">
+                            <button class="view-more-btn" onclick="window.location.href='ticket_management.html'">
+                                查看更多工单记录
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <script>
+        // 检查ECharts是否正确加载
+        if (typeof echarts === 'undefined') {
+            console.error('ECharts library not loaded!');
+            // 尝试重新加载ECharts
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js';
+            script.onload = function() {
+                console.log('ECharts library loaded successfully');
+                initCharts();
+            };
+            script.onerror = function() {
+                console.error('Failed to load ECharts library');
+            };
+            document.head.appendChild(script);
+        } else {
+            console.log('ECharts library loaded successfully');
+            initCharts();
+        }
+        
+        function initCharts() {
+            // 确保DOM完全加载后再初始化图表
+            setTimeout(function() {
+                console.log('Initializing charts...');
+
+                // 来电类型饼图
+                const callTypeChart = echarts.init(document.getElementById('callTypeChart'));
+                const callTypeOption = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: <b>{c}</b> ({d}%)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        borderColor: '#eee',
+                        borderWidth: 1,
+                        padding: [10, 15],
+                        textStyle: {
+                            color: '#333'
+                        },
+                        extraCssText: 'box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border-radius: 6px;'
+                    },
+                    title: {
+                        text: '总计: 3147',
+                        textStyle: {
+                            fontSize: 12,
+                            fontWeight: 'normal',
+                            color: '#666'
+                        },
+                        left: 'center',
+                        top: '0'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: '5%',
+                        top: 'center',
+                        itemWidth: 8,
+                        itemHeight: 8,
+                        textStyle: {
+                            fontSize: 10,
+                            color: '#666'
+                        },
+                        itemGap: 6
+                    },
+                    color: ['#4285f4', '#34a853', '#fbbc05', '#ea4335', '#9c27b0'],
+                    series: [
+                        {
+                            name: '来电类型',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            center: ['40%', '55%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 4,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(0, 0, 0, 0.2)'
+                                }
+                            },
+                            data: [
+                                { value: 1048, name: '产品咨询' },
+                                { value: 735, name: '技术支持' },
+                                { value: 580, name: '账户问题' },
+                                { value: 484, name: '投诉建议' },
+                                { value: 300, name: '其他' }
+                            ]
+                        }
+                    ]
+                };
+                callTypeChart.setOption(callTypeOption);
+
+                // 转人工原因饼图
+                const transferReasonChart = echarts.init(document.getElementById('transferReasonChart'));
+                const transferReasonOption = {
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: '{b}: <b>{c}</b> ({d}%)',
+                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
+                        borderColor: '#eee',
+                        borderWidth: 1,
+                        padding: [10, 15],
+                        textStyle: {
+                            color: '#333'
+                        },
+                        extraCssText: 'box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); border-radius: 6px;'
+                    },
+                    title: {
+                        text: '总计: 1162',
+                        textStyle: {
+                            fontSize: 12,
+                            fontWeight: 'normal',
+                            color: '#666'
+                        },
+                        left: 'center',
+                        top: '0'
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        right: '5%',
+                        top: 'center',
+                        itemWidth: 8,
+                        itemHeight: 8,
+                        textStyle: {
+                            fontSize: 10,
+                            color: '#666'
+                        },
+                        itemGap: 6
+                    },
+                    color: ['#4285f4', '#34a853', '#fbbc05', '#ea4335', '#9c27b0'],
+                    series: [
+                        {
+                            name: '转人工原因',
+                            type: 'pie',
+                            radius: ['40%', '70%'],
+                            center: ['40%', '55%'],
+                            avoidLabelOverlap: false,
+                            itemStyle: {
+                                borderRadius: 4,
+                                borderColor: '#fff',
+                                borderWidth: 2
+                            },
+                            label: {
+                                show: false
+                            },
+                            labelLine: {
+                                show: false
+                            },
+                            emphasis: {
+                                itemStyle: {
+                                    shadowBlur: 10,
+                                    shadowColor: 'rgba(0, 0, 0, 0.2)'
+                                }
+                            },
+                            data: [
+                                { value: 335, name: '复杂问题' },
+                                { value: 310, name: 'AI未理解' },
+                                { value: 234, name: '客户要求' },
+                                { value: 135, name: '特殊情况' },
+                                { value: 148, name: '其他' }
+                            ]
+                        }
+                    ]
+                };
+                transferReasonChart.setOption(transferReasonOption);
+
+                // 响应式调整
+                window.addEventListener('resize', function() {
+                    callTypeChart.resize();
+                    transferReasonChart.resize();
+                });
+
+                // 导航点击事件
+                const navItems = document.querySelectorAll('.nav-item');
+                navItems.forEach(item => {
+                    item.addEventListener('click', function() {
+                        navItems.forEach(nav => nav.classList.remove('active'));
+                        this.classList.add('active');
+                        const page = this.getAttribute('data-page');
+                        // 这里可以添加页面跳转逻辑
+                        console.log('Navigate to:', page);
+                    });
+                });
+
+                // 面包屑点击事件
+                const breadcrumbLinks = document.querySelectorAll('.breadcrumb-item a');
+                breadcrumbLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const page = this.getAttribute('href').replace('#', '');
+                        // 这里可以添加页面跳转逻辑
+                        console.log('Navigate to:', page);
+                    });
+                });
+
+                // 标签页切换功能
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                const tabPanes = document.querySelectorAll('.tab-pane');
+                
+                tabBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        // 移除所有标签页的active类
+                        tabBtns.forEach(b => b.classList.remove('active'));
+                        tabPanes.forEach(p => p.classList.remove('active'));
+                        
+                        // 添加当前标签页的active类
+                        this.classList.add('active');
+                        
+                        // 获取对应的内容面板
+                        const targetId = this.textContent.trim() === '服务记录' ? 'service-records' : 'ticket-records';
+                        document.getElementById(targetId).classList.add('active');
+                    });
+                });
+            }, 100);
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // 初始化已经移到上面的initCharts函数中
+
+            // 添加菜单折叠/展开功能
+            const customerServiceLink = document.querySelector('.nav-item.sub-item i.fa-chevron-down').parentElement;
+            const subMenu = document.querySelector('.sub-menu');
+            
+            customerServiceLink.addEventListener('click', function(e) {
+                e.preventDefault();
+                const chevronIcon = this.querySelector('.fa-chevron-down');
+                chevronIcon.style.transform = subMenu.style.display === 'none' ? 'rotate(180deg)' : 'rotate(0deg)';
+                subMenu.style.display = subMenu.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // 添加样式
+            const style = document.createElement('style');
+            style.textContent = `
+                .nav-item i.fa-chevron-down {
+                    transition: transform 0.3s ease;
+                }
+                .sub-menu {
+                    transition: all 0.3s ease;
+                }
+            `;
+            document.head.appendChild(style);
+        });
+    </script>
+</body>
+</html> 
