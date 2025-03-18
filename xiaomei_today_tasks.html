@@ -3139,6 +3139,60 @@
             justify-content: center;
             gap: 8px;
         }
+
+        /* 添加导出报告弹窗样式 */
+        .export-options-popup {
+            position: absolute;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+            padding: 10px;
+            z-index: 1000;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .export-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .export-option:hover {
+            background: #f5f7fa;
+        }
+
+        .export-option i {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+            color: #3498db;
+        }
+
+        .export-option-label {
+            font-size: 14px;
+            color: #2c3e50;
+        }
+
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 999;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -3261,12 +3315,34 @@
                                 <span style="color: #666;">至</span>
                                 <input type="date" value="2025-03-16" style="padding: 6px 12px; border: 1px solid #e9ecef; background: #fff; border-radius: 4px; color: #666; font-size: 13px; cursor: pointer; transition: all 0.3s ease;">
                             </div>
-                            <button class="export-btn" style="padding: 6px 16px; border: 1px solid #2ecc71; background: rgba(46, 204, 113, 0.1); border-radius: 4px; color: #2ecc71; font-size: 13px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; white-space: nowrap;">
+                            <button id="exportReportBtn" class="export-btn" style="padding: 6px 16px; border: 1px solid #2ecc71; background: rgba(46, 204, 113, 0.1); border-radius: 4px; color: #2ecc71; font-size: 13px; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; white-space: nowrap; position: relative;">
                                 <i class="fas fa-file-export"></i>
                                 导出报告
                             </button>
                         </div>
                     </div>
+
+                    <!-- 添加导出报告弹窗 -->
+                    <div id="exportOptionsPopup" class="export-options-popup">
+                        <div class="export-option" onclick="exportReport('excel')">
+                            <i class="fas fa-file-excel"></i>
+                            <span class="export-option-label">Excel表格导出</span>
+                        </div>
+                        <div class="export-option" onclick="exportReport('pdf')">
+                            <i class="fas fa-file-pdf"></i>
+                            <span class="export-option-label">PDF文档导出</span>
+                        </div>
+                        <div class="export-option" onclick="exportReport('csv')">
+                            <i class="fas fa-file-csv"></i>
+                            <span class="export-option-label">CSV格式导出</span>
+                        </div>
+                        <div class="export-option" onclick="exportReport('print')">
+                            <i class="fas fa-print"></i>
+                            <span class="export-option-label">打印报告</span>
+                        </div>
+                    </div>
+                    
+                    <div id="popupOverlay" class="popup-overlay"></div>
 
                     <!-- 统计数据卡片 -->
                     <div style="display: flex; gap: 15px; justify-content: space-between; flex-wrap: wrap; margin-bottom: 20px;">
@@ -4372,6 +4448,12 @@
             // 处理标签添加
             function handleTagAddition() {
                 const addTagBtn = document.getElementById('addTagBtn');
+                // 添加null检查，防止错误
+                if (!addTagBtn) {
+                    console.log('未找到addTagBtn元素，跳过标签添加功能初始化');
+                    return;
+                }
+                
                 const tagsContainer = addTagBtn.parentElement;
                 
                 addTagBtn.addEventListener('click', (e) => {
@@ -4492,120 +4574,231 @@
 
             // 初始化所有功能
             function initializeTaskModal() {
-                generateTimeGrid();
-                handleTagAddition();
-                handleShortcuts();
-                handleBlacklist();
-                handleIntervalSelection();
-                initializeStrategyControls(); // 添加策略控制初始化
-                initializeStrategyModal(); // 添加策略弹窗初始化
-                
-                // 复制任务名称
-                document.getElementById('copyTaskName').addEventListener('click', () => {
-                    const taskName = document.getElementById('taskName').value;
-                    navigator.clipboard.writeText(taskName)
-                        .then(() => alert('任务名称已复制'))
-                        .catch(err => console.error('复制失败:', err));
-                });
-                
-                // 清空任务名称
-                document.getElementById('clearTaskName').addEventListener('click', () => {
-                    document.getElementById('taskName').value = '';
-                });
-                
-                // 提交表单
-                document.querySelector('.submit-btn').addEventListener('click', () => {
-                    // TODO: 实现表单提交逻辑
-                    alert('任务创建成功！');
-                    hideAllModals();
-                });
+                try {
+                    // 检查每个DOM元素是否存在后再操作
+                    if (document.getElementById('weeklyTimeGrid')) {
+                        generateTimeGrid();
+                    }
+                    
+                    handleTagAddition(); // 已添加null检查
+                    
+                    if (document.querySelector('.shortcut-item')) {
+                        handleShortcuts();
+                    }
+                    
+                    if (document.getElementById('manageBlacklist')) {
+                        handleBlacklist();
+                    }
+                    
+                    if (document.querySelector('.interval-btn')) {
+                        handleIntervalSelection();
+                    }
+                    
+                    // 仅当存在相关元素时初始化策略控制
+                    if (document.querySelector('.strategy-btn')) {
+                        initializeStrategyControls();
+                    }
+                    
+                    if (document.getElementById('strategyModal')) {
+                        initializeStrategyModal();
+                    }
+                    
+                    // 复制任务名称
+                    const copyTaskNameBtn = document.getElementById('copyTaskName');
+                    if (copyTaskNameBtn) {
+                        copyTaskNameBtn.addEventListener('click', () => {
+                            const taskName = document.getElementById('taskName');
+                            if (taskName) {
+                                navigator.clipboard.writeText(taskName.value)
+                                    .then(() => alert('任务名称已复制'))
+                                    .catch(err => console.error('复制失败:', err));
+                            }
+                        });
+                    }
+                    
+                    // 清空任务名称
+                    const clearTaskNameBtn = document.getElementById('clearTaskName');
+                    if (clearTaskNameBtn) {
+                        clearTaskNameBtn.addEventListener('click', () => {
+                            const taskName = document.getElementById('taskName');
+                            if (taskName) {
+                                taskName.value = '';
+                            }
+                        });
+                    }
+                    
+                    // 提交表单
+                    const submitBtn = document.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.addEventListener('click', () => {
+                            // TODO: 实现表单提交逻辑
+                            alert('任务创建成功！');
+                            if (typeof hideAllModals === 'function') {
+                                hideAllModals();
+                            }
+                        });
+                    }
+                } catch (error) {
+                    console.error('初始化任务模态窗口时出错:', error);
+                }
             }
 
             // 确保页面完全加载后再初始化
             document.addEventListener('DOMContentLoaded', function() {
                 console.log('DOM fully loaded');
-                initializeTaskModal();
-                initializeStrategyControls(); // 添加策略控制初始化
                 
-                // 初始化时间并每秒更新
-                updateTime();
-                setInterval(updateTime, 1000);
-
-                // 添加充值按钮事件
-                const rechargeBtn = document.querySelector('.agent-recharge-btn');
-                if (rechargeBtn) {
-                    rechargeBtn.addEventListener('click', function() {
-                        console.log('Recharge button clicked');
-                        alert('充值功能即将上线');
-                    });
-                }
-
-                // 新建任务按钮点击事件
-                const createTaskBtn = document.querySelector('.create-task-btn');
-                if (createTaskBtn) {
-                    createTaskBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Create task button clicked');
-                        showModal('createTaskModal');
-                    });
-                }
-
-                // 变更策略按钮点击事件
-                const changeStrategyBtn = document.querySelector('.change-strategy-btn');
-                if (changeStrategyBtn) {
-                    changeStrategyBtn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        console.log('Change strategy button clicked');
-                        showModal('changeStrategyModal');
-                    });
-                }
-
-                // 关闭按钮事件
-                document.querySelectorAll('.close-modal-btn, .cancel-btn').forEach(btn => {
-                    btn.addEventListener('click', function(e) {
-                        e.preventDefault();
-                        hideAllModals();
-                    });
-                });
-
-                // 点击遮罩层关闭弹窗
-                document.querySelectorAll('.modal-overlay').forEach(overlay => {
-                    overlay.addEventListener('click', function(e) {
-                        if (e.target === this) {
+                try {
+                    initializeTaskModal();
+                    initializeStrategyControls(); // 添加策略控制初始化
+                    
+                    // 初始化时间并每秒更新
+                    updateTime();
+                    setInterval(updateTime, 1000);
+    
+                    // 添加充值按钮事件
+                    const rechargeBtn = document.querySelector('.agent-recharge-btn');
+                    if (rechargeBtn) {
+                        rechargeBtn.addEventListener('click', function() {
+                            console.log('Recharge button clicked');
+                            alert('充值功能即将上线');
+                        });
+                    }
+    
+                    // 新建任务按钮点击事件
+                    const createTaskBtn = document.querySelector('.create-task-btn');
+                    if (createTaskBtn) {
+                        createTaskBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            console.log('Create task button clicked');
+                            showModal('createTaskModal');
+                        });
+                    }
+    
+                    // 变更策略按钮点击事件
+                    const changeStrategyBtn = document.querySelector('.change-strategy-btn');
+                    if (changeStrategyBtn) {
+                        changeStrategyBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            console.log('Change strategy button clicked');
+                            showModal('changeStrategyModal');
+                        });
+                    }
+    
+                    // 关闭按钮事件
+                    document.querySelectorAll('.close-modal-btn, .cancel-btn').forEach(btn => {
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
                             hideAllModals();
-                        }
+                        });
                     });
-                });
-
-                // 阻止弹窗内容点击事件冒泡
-                document.querySelectorAll('.modal-container').forEach(container => {
-                    container.addEventListener('click', function(e) {
-                        e.stopPropagation();
+                    
+                    // 点击遮罩层关闭弹窗
+                    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+                        overlay.addEventListener('click', function(e) {
+                            if (e.target === this) {
+                                hideAllModals();
+                            }
+                        });
                     });
-                });
-
-                // 时间格子点击事件
-                document.querySelectorAll('.time-cell:not(:first-child)').forEach(cell => {
-                    cell.addEventListener('click', function() {
-                        this.classList.toggle('active');
+                    
+                    // 阻止弹窗内容点击事件冒泡
+                    document.querySelectorAll('.modal-container').forEach(container => {
+                        container.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
                     });
-                });
-
-                // 持续时间按钮点击事件
-                document.querySelectorAll('.duration-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
+                    
+                    // 时间格子点击事件
+                    document.querySelectorAll('.time-cell:not(:first-child)').forEach(cell => {
+                        cell.addEventListener('click', function() {
+                            this.classList.toggle('active');
+                        });
                     });
-                });
-
-                // 间隔按钮点击事件
-                document.querySelectorAll('.interval-btn').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        document.querySelectorAll('.interval-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
+                    
+                    // 持续时间按钮点击事件
+                    document.querySelectorAll('.duration-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.duration-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
                     });
-                });
+                    
+                    // 间隔按钮点击事件
+                    document.querySelectorAll('.interval-btn').forEach(btn => {
+                        btn.addEventListener('click', function() {
+                            document.querySelectorAll('.interval-btn').forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                    
+                    // 导出报告弹窗功能
+                    const exportBtn = document.getElementById('exportReportBtn');
+                    const exportPopup = document.getElementById('exportOptionsPopup');
+                    const popupOverlay = document.getElementById('popupOverlay');
+                    
+                    if (exportBtn && exportPopup && popupOverlay) {
+                        console.log('找到导出按钮和弹窗元素'); // 调试用
+                        
+                        // 移除可能存在的旧事件监听器
+                        const newExportBtn = exportBtn.cloneNode(true);
+                        exportBtn.parentNode.replaceChild(newExportBtn, exportBtn);
+                        
+                        // 添加新的事件监听器
+                        newExportBtn.addEventListener('click', function(e) {
+                            console.log('导出按钮被点击'); // 调试用
+                            e.preventDefault(); // 阻止默认行为
+                            e.stopPropagation(); // 阻止事件冒泡
+                            
+                            // 获取按钮位置并定位弹窗
+                            const btnRect = newExportBtn.getBoundingClientRect();
+                            exportPopup.style.top = (btnRect.bottom + window.scrollY + 5) + 'px';
+                            exportPopup.style.left = (btnRect.left + window.scrollX) + 'px';
+                            
+                            // 显示弹窗和遮罩层
+                            exportPopup.style.display = 'block';
+                            popupOverlay.style.display = 'block';
+                        });
+                        
+                        // 导出报告功能
+                        window.exportReport = function(type) {
+                            let message = '';
+                            
+                            switch(type) {
+                                case 'excel':
+                                    message = '开始导出Excel表格...';
+                                    break;
+                                case 'pdf':
+                                    message = '开始导出PDF文档...';
+                                    break;
+                                case 'csv':
+                                    message = '开始导出CSV格式...';
+                                    break;
+                                case 'print':
+                                    message = '准备打印报告...';
+                                    break;
+                            }
+                            
+                            alert(message);
+                            
+                            // 关闭弹窗
+                            exportPopup.style.display = 'none';
+                            popupOverlay.style.display = 'none';
+                        };
+                        
+                        // 点击遮罩层关闭弹窗
+                        popupOverlay.addEventListener('click', function() {
+                            exportPopup.style.display = 'none';
+                            popupOverlay.style.display = 'none';
+                        });
+                        
+                        // 阻止弹窗点击事件冒泡
+                        exportPopup.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                        });
+                    }
+                } catch (error) {
+                    console.error('初始化页面时出错:', error);
+                }
             });
 
             // 添加全局点击处理程序
@@ -5018,37 +5211,74 @@
             }
 
             // 更新变更策略按钮点击事件
-            document.querySelector('.change-strategy-btn').addEventListener('click', function() {
-                const modal = document.getElementById('strategyModalFrame');
-                if (modal) {
-                    modal.style.display = 'block';
-                    createTaskCards();
+            function initializeStrategyButtonEvents() {
+                const strategyBtn = document.querySelector('.change-strategy-btn');
+                // 添加null检查
+                if (!strategyBtn) {
+                    console.log('未找到变更策略按钮，跳过事件绑定');
+                    return;
                 }
-            });
-
-            // 初始化策略设置控件
-            function initializeStrategyControls() {
-                // 优先级按钮
-                document.querySelectorAll('.strategy-btn[data-priority]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const parent = this.closest('.strategy-controls');
-                        parent.querySelectorAll('.strategy-btn').forEach(b => b.classList.remove('active'));
-                        this.classList.add('active');
-                    });
+                
+                strategyBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('strategyModalFrame');
+                    if (modal) {
+                        modal.style.display = 'block';
+                        createTaskCards();
+                    }
                 });
-
-                // 并发控制
-                document.querySelectorAll('.strategy-btn[data-action]').forEach(btn => {
-                    btn.addEventListener('click', function() {
-                        const valueSpan = this.parentElement.querySelector('.strategy-value');
-                        const value = parseInt(valueSpan.textContent);
-                        if (this.dataset.action === 'increase') {
-                            valueSpan.textContent = value + 5;
-                        } else {
-                            valueSpan.textContent = Math.max(5, value - 5);
-                        }
-                    });
-                });
+            }
+            
+            // 初始化函数中调用策略按钮初始化
+            function initializeTaskModal() {
+                // 添加try-catch块捕获可能的错误
+                try {
+                    if (document.getElementById('weeklyTimeGrid')) {
+                        generateTimeGrid();
+                    }
+                    handleTagAddition();
+                    handleShortcuts();
+                    handleBlacklist();
+                    handleIntervalSelection();
+                    initializeStrategyControls(); // 添加策略控制初始化
+                    initializeStrategyModal(); // 添加策略弹窗初始化
+                    initializeStrategyButtonEvents(); // 添加策略按钮事件初始化
+                    
+                    // 复制任务名称
+                    const copyTaskNameBtn = document.getElementById('copyTaskName');
+                    if (copyTaskNameBtn) {
+                        copyTaskNameBtn.addEventListener('click', () => {
+                            const taskName = document.getElementById('taskName');
+                            if (taskName) {
+                                navigator.clipboard.writeText(taskName.value)
+                                    .then(() => alert('任务名称已复制'))
+                                    .catch(err => console.error('复制失败:', err));
+                            }
+                        });
+                    }
+                    
+                    // 清空任务名称
+                    const clearTaskNameBtn = document.getElementById('clearTaskName');
+                    if (clearTaskNameBtn) {
+                        clearTaskNameBtn.addEventListener('click', () => {
+                            const taskName = document.getElementById('taskName');
+                            if (taskName) {
+                                taskName.value = '';
+                            }
+                        });
+                    }
+                    
+                    // 提交表单
+                    const submitBtn = document.querySelector('.submit-btn');
+                    if (submitBtn) {
+                        submitBtn.addEventListener('click', () => {
+                            // TODO: 实现表单提交逻辑
+                            alert('任务创建成功！');
+                            hideAllModals();
+                        });
+                    }
+                } catch (error) {
+                    console.error('初始化任务模态窗口时出错:', error);
+                }
             }
 
             // 拖拽事件处理函数
@@ -5597,6 +5827,98 @@
                     });
                 });
             });
+
+            // 确保页面加载完成后执行
+            document.addEventListener('DOMContentLoaded', function() {
+                // 导出报告弹窗功能
+                const exportBtn = document.getElementById('exportReportBtn');
+                const exportPopup = document.getElementById('exportOptionsPopup');
+                const popupOverlay = document.getElementById('popupOverlay');
+                
+                if (exportBtn && exportPopup && popupOverlay) {
+                    console.log('找到导出按钮和弹窗元素'); // 调试用
+                    exportBtn.addEventListener('click', function(e) {
+                        console.log('导出按钮被点击'); // 调试用
+                        e.preventDefault(); // 阻止默认行为
+                        e.stopPropagation(); // 阻止事件冒泡
+                        
+                        // 获取按钮位置并定位弹窗
+                        const btnRect = exportBtn.getBoundingClientRect();
+                        exportPopup.style.top = (btnRect.bottom + window.scrollY + 5) + 'px';
+                        exportPopup.style.left = (btnRect.left + window.scrollX) + 'px';
+                        
+                        // 显示弹窗和遮罩层
+                        exportPopup.style.display = 'block';
+                        popupOverlay.style.display = 'block';
+                    });
+                    
+                    // 点击遮罩层关闭弹窗
+                    popupOverlay.addEventListener('click', function() {
+                        exportPopup.style.display = 'none';
+                        popupOverlay.style.display = 'none';
+                    });
+                    
+                    // 阻止弹窗点击事件冒泡
+                    exportPopup.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                    
+                    // 点击文档其他地方关闭弹窗
+                    document.addEventListener('click', function() {
+                        exportPopup.style.display = 'none';
+                        popupOverlay.style.display = 'none';
+                    });
+                } else {
+                    console.log('未找到导出按钮或弹窗元素'); // 调试用
+                    if (!exportBtn) console.log('未找到exportBtn');
+                    if (!exportPopup) console.log('未找到exportPopup');
+                    if (!popupOverlay) console.log('未找到popupOverlay');
+                }
+                
+                // 导出报告功能
+                window.exportReport = function(type) {
+                    let message = '';
+                    
+                    switch(type) {
+                        case 'excel':
+                            message = '开始导出Excel表格...';
+                            break;
+                        case 'pdf':
+                            message = '开始导出PDF文档...';
+                            break;
+                        case 'csv':
+                            message = '开始导出CSV格式...';
+                            break;
+                        case 'print':
+                            message = '准备打印报告...';
+                            break;
+                    }
+                    
+                    alert(message);
+                    
+                    // 关闭弹窗
+                    document.getElementById('exportOptionsPopup').style.display = 'none';
+                    document.getElementById('popupOverlay').style.display = 'none';
+                };
+            });
+
+            // 更新变更策略按钮点击事件
+            const strategyBtn = document.querySelector('.change-strategy-btn');
+            // 添加null检查，防止错误
+            if (strategyBtn) {
+                strategyBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('strategyModalFrame');
+                    if (modal) {
+                        modal.style.display = 'block';
+                        createTaskCards();
+                    }
+                });
+            } else {
+                console.log('未找到变更策略按钮，跳过事件绑定');
+            }
+
+            // 初始化策略设置控件
+            // ... existing code ...
         </script>
     </body>
 </html> 

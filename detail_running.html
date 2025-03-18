@@ -474,6 +474,56 @@
             background: #e1f0ff;
             color: #3498db;
         }
+
+        /* 添加导出按钮样式 */
+        .export-btn {
+            padding: 6px 16px;
+            border: 1px solid #2ecc71;
+            background: rgba(46, 204, 113, 0.1);
+            border-radius: 4px;
+            color: #2ecc71;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+            position: relative;
+        }
+
+        .export-btn:hover {
+            background: rgba(46, 204, 113, 0.2);
+        }
+
+        /* 添加导出报告弹窗样式 */
+        .export-options-popup {
+            display: none;
+            position: absolute;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+            padding: 10px 0;
+            z-index: 10;
+            min-width: 180px;
+        }
+
+        .export-option {
+            padding: 8px 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .export-option:hover {
+            background: #f8f9fa;
+        }
+
+        .export-option-label {
+            font-size: 13px;
+        }
     </style>
 </head>
 <body>
@@ -537,12 +587,8 @@
                 <i class="fas fa-tasks"></i>
                 <span>今日任务</span>
             </a>
-            <a href="interaction.html" class="nav-item sub-item">
-                <i class="fas fa-th-large"></i>
-                <span>全任务面板</span>
-            </a>
-            <a href="crm.html" class="nav-item sub-item">
-                <i class="fas fa-users"></i>
+           <a href="crm.html" class="nav-item">
+                <i class="fas fa-user"></i>
                 <span>客户管理</span>
             </a>
         </div>
@@ -638,26 +684,55 @@
         <!-- 外呼列表 -->
         <div class="task-section">
             <div class="list-nav" style="margin-bottom: 20px; border-bottom: 1px solid #eee;">
-                <div class="nav-tabs" style="display: flex; gap: 20px;">
-                    <div class="nav-tab" data-status="all" style="padding: 10px 20px; cursor: pointer; position: relative;">
-                        总表
-                        <span class="count-badge" style="margin-left: 5px;">13/1478</span>
-                        <div class="active-indicator" style="position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: #3498db;"></div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="nav-tabs" style="display: flex; gap: 20px;">
+                        <div class="nav-tab" data-status="all" style="padding: 10px 20px; cursor: pointer; position: relative;">
+                            总表
+                            <span class="count-badge" style="margin-left: 5px;">13/1478</span>
+                            <div class="active-indicator" style="position: absolute; bottom: -1px; left: 0; right: 0; height: 2px; background-color: #3498db;"></div>
+                        </div>
+                        <div class="nav-tab" data-status="running" style="padding: 10px 20px; cursor: pointer; position: relative;">
+                            正在外呼
+                            <span class="count-badge" style="margin-left: 5px;">5/42</span>
+                        </div>
+                        <div class="nav-tab" data-status="completed" style="padding: 10px 20px; cursor: pointer; position: relative;">
+                            已完成外呼
+                            <span class="count-badge">3/1280</span>
+                        </div>
+                        <div class="nav-tab" data-status="waiting" style="padding: 10px 20px; cursor: pointer; position: relative;">
+                            等待外呼
+                            <span class="count-badge">5/156</span>
+                        </div>
                     </div>
-                    <div class="nav-tab" data-status="running" style="padding: 10px 20px; cursor: pointer; position: relative;">
-                        正在外呼
-                        <span class="count-badge" style="margin-left: 5px;">5/42</span>
-                    </div>
-                    <div class="nav-tab" data-status="completed" style="padding: 10px 20px; cursor: pointer; position: relative;">
-                        已完成外呼
-                        <span class="count-badge">3/1280</span>
-                    </div>
-                    <div class="nav-tab" data-status="waiting" style="padding: 10px 20px; cursor: pointer; position: relative;">
-                        等待外呼
-                        <span class="count-badge">5/156</span>
-                    </div>
+                    
+                    <!-- 添加导出按钮 -->
+                    <button id="exportReportBtn" class="export-btn">
+                        <i class="fas fa-file-export"></i>
+                        导出报告
+                    </button>
                 </div>
             </div>
+            
+            <!-- 添加导出报告弹窗 -->
+            <div id="exportOptionsPopup" class="export-options-popup">
+                <div class="export-option" onclick="exportReport('excel')">
+                    <i class="fas fa-file-excel" style="color: #1d6f42;"></i>
+                    <span class="export-option-label">Excel表格导出</span>
+                </div>
+                <div class="export-option" onclick="exportReport('pdf')">
+                    <i class="fas fa-file-pdf" style="color: #e74c3c;"></i>
+                    <span class="export-option-label">PDF文档导出</span>
+                </div>
+                <div class="export-option" onclick="exportReport('csv')">
+                    <i class="fas fa-file-csv" style="color: #3498db;"></i>
+                    <span class="export-option-label">CSV格式导出</span>
+                </div>
+                <div class="export-option" onclick="exportReport('print')">
+                    <i class="fas fa-print" style="color: #7f8c8d;"></i>
+                    <span class="export-option-label">打印报告</span>
+                </div>
+            </div>
+            
             <table class="task-table">
                 <thead>
                     <tr>
@@ -953,6 +1028,57 @@
                 });
             }
         });
+
+        // 导出按钮点击事件处理
+        const exportReportBtn = document.getElementById('exportReportBtn');
+        const exportOptionsPopup = document.getElementById('exportOptionsPopup');
+        
+        exportReportBtn.addEventListener('click', function(e) {
+            e.stopPropagation(); // 阻止事件冒泡
+            
+            // 计算弹窗位置
+            const buttonRect = exportReportBtn.getBoundingClientRect();
+            exportOptionsPopup.style.top = (buttonRect.bottom + 5) + 'px';
+            exportOptionsPopup.style.right = (window.innerWidth - buttonRect.right) + 'px';
+            
+            // 显示弹窗
+            exportOptionsPopup.style.display = 'block';
+        });
+        
+        // 点击页面其他地方关闭弹窗
+        document.addEventListener('click', function(e) {
+            if (exportOptionsPopup.style.display === 'block' && !exportOptionsPopup.contains(e.target) && e.target !== exportReportBtn) {
+                exportOptionsPopup.style.display = 'none';
+            }
+        });
+        
+        // 导出功能
+        function exportReport(type) {
+            exportOptionsPopup.style.display = 'none'; // 关闭弹窗
+            
+            // 根据类型执行不同的导出操作
+            switch(type) {
+                case 'excel':
+                    alert('正在导出Excel格式报告...');
+                    // 这里添加实际导出Excel的逻辑
+                    break;
+                case 'pdf':
+                    alert('正在导出PDF格式报告...');
+                    // 这里添加实际导出PDF的逻辑
+                    break;
+                case 'csv':
+                    alert('正在导出CSV格式报告...');
+                    // 这里添加实际导出CSV的逻辑
+                    break;
+                case 'print':
+                    alert('准备打印报告...');
+                    // 这里添加实际打印的逻辑
+                    // window.print();
+                    break;
+            }
+            
+            console.log('导出报告，类型:', type);
+        }
     </script>
 </body>
 </html> 

@@ -1,89 +1,205 @@
-# AION AI客服工作台 - 页面导航说明
+# AION 智能工作台系统
 
-## 页面跳转关系
+AION是一个智能化的企业工作台系统，集成了智能外呼、智能客服等功能，旨在提升企业的运营效率和服务质量。
 
-### 首页 (index.html)
-- 导航栏链接:
-  - AION人才网
-  - AION Agent
-  - AION TTS对话
-- 员工卡片链接:
-  - 点击员工头像跳转到对应的工作台页面
-  - "查看员工详情"链接跳转到对应的员工详情页面
-  - 张小明的卡片可跳转到 customer_service.html
-  - 小美的卡片可跳转到 interaction.html
+## 系统导航结构
 
-### 小明工作台页面 (customer_service.html)
-- 导航栏链接:
-  - AI助手 (dashboard) -> customer_service.html
-  - 客服记录 (service_records.html) -> service_records.html
-  - 工单管理 (tickets) -> ticket_management.html
-  - 客户管理 (customers) -> customers.html
-  - 系统设置 (settings) -> settings.html
+### 1. 员工中心 (index.html)
+员工中心是系统的主入口，提供以下功能：
+- 系统概览和状态监控
+- 账户余额和费用管理
+- 员工工作台快速切换
+- 通知中心和系统设置
 
-### 客服记录页面 (service_records.html)
-- 导航栏链接:
-  - 首页 -> index.html
-  - 小明工作台 -> customer_service.html
-  - 工单管理 -> ticket_management.html
-  - 客户管理 -> customers.html
-  - 知识库 -> knowledge.html
-  - 系统设置 -> settings.html
+### 2. 工作台切换
+系统支持多个角色的工作台切换：
 
-### 工单管理页面 (ticket_management.html)
-- 导航栏链接:
-  - 首页/工作台 -> customer_service.html
-  - 客服记录 -> service_records.html
-  - 客户管理 -> customers.html
-  - 系统设置 -> settings.html
-- 功能区:
-  - 工单统计面板
-  - 工单状态分布图表
-  - 问题类型分布图表
-  - 处理时长趋势图表
-  - 工单列表（可筛选显示字段）
-  - ASR和OCR记录查看按钮
+#### 2.1 小美工作台 (xiaomei_today_tasks.html)
+面向外呼专员的专业工作台：
+- 外呼任务管理
+- 通话数据统计
+- 商机转化追踪
+- 任务完成进度
 
-### 客户管理页面 (customers.html)
-- 导航栏链接:
-  - AI助手 (dashboard) -> customer_service.html
-  - 客服记录 -> service_records.html
-  - 工单管理 -> ticket_management.html
-  - 系统设置 -> settings.html
+#### 2.2 小明工作台 (customer_service.html)
+面向客服专员的智能工作台：
+- 来电服务记录
+- 工单管理系统
+- 服务质量分析
+- 客户画像管理
 
-### 小美员工详情页面 (interaction.html)
-- 面包屑导航:
-  - 首页 -> index.html
-  - 小美员工详情 (当前页面)
-- 导航栏链接:
-  - 首页 -> index.html
-  - 小美员工详情 (当前页面)
-  - 客户管理
+### 3. 客户管理系统
+统一的客户管理入口：
+- 客户信息管理
+- 服务记录追踪
+- 客户关系维护
 
-### 项目详情页面 (detail1.html)
-- 面包屑导航:
-  - 首页 -> index.html
-  - 小美员工详情 -> interaction.html
-  - 19.9大促销 (当前页面)
-- 导航栏链接:
-  - 首页 -> index.html
-  - 小美员工详情
-  - 客户管理
+## 导航逻辑
 
-## 导航实现说明
-1. 所有页面共享相同的导航栏结构，但根据不同页面显示不同的导航项
-2. 导航项使用 data-page 属性来标识目标页面
-3. 面包屑导航提供了清晰的页面层级关系和返回路径
-4. 页面跳转通过以下方式实现:
-   - 直接链接 (a href)
-   - JavaScript 跳转 (window.location.href)
-   - 导航栏点击事件
-5. 活动页面在导航栏中会高亮显示 (active 类)
+```
+AION工作台
+├── 员工中心 (index.html)
+│   ├── 系统概览
+│   ├── 费用管理
+│   └── 通知中心
+│
+├── 工作台切换
+│   ├── 小美工作台 (xiaomei_today_tasks.html)
+│   │   ├── 今日任务
+│   │   ├── 互动管理
+│   │   └── CRM系统
+│   │
+│   └── 小明工作台 (customer_service.html)
+│       ├── 服务记录
+│       ├── 工单管理
+│       └── 服务分析
+│
+└── 客户管理系统
+    ├── 客户管理
+    ├── 服务记录
+    └── 关系维护
+```
+
+## 页面关系说明
+
+1. **index.html**
+   - 作为系统主页面，提供全局导航和功能概览
+   - 显示关键指标和系统状态
+   - 提供快速切换到各工作台的入口
+
+2. **xiaomei_today_tasks.html**
+   - 外呼专员的专属工作台
+   - 提供任务管理和执行功能
+   - 实时显示工作数据和绩效
+
+3. **customer_service.html**
+   - 客服专员的专属工作台
+   - 管理来电服务和工单处理
+   - 提供服务质量分析和客户画像
+
+## 详细页面跳转逻辑
+
+### 员工中心 (index.html) 的跳转逻辑
+- **侧边导航栏**
+  - "员工中心" → index.html (当前页面)
+  - "小美工作台" → xiaomei_today_tasks.html
+  - "小明工作台" → customer_service.html
+  - "客户管理" → crm.html
+
+- **员工卡片**
+  - 李小红卡片和"查看员工详情"链接 → xiaomei_today_tasks.html
+  - 张小明卡片和"查看员工详情"链接 → customer_service.html
+
+- **顶部工具栏**
+  - 通知图标 → 弹出通知面板
+  - 设置图标 → 系统设置页面
+  - 用户头像 → 用户个人设置
+
+- **其他功能入口**
+  - "立即充值"按钮 → 充值页面
+  - "查看费用详情"链接 → fee_management.html
+
+### 小美工作台 (xiaomei_today_tasks.html) 的跳转逻辑
+- **侧边导航栏**
+  - "员工中心" → index.html
+  - "小美工作台" → xiaomei_today_tasks.html (当前页面)
+  - "客户管理" → crm.html
+
+- **工作台子菜单**
+  - "今日任务" → xiaomei_today_tasks.html (当前页面)
+  - "互动管理" → interaction.html
+  - "CRM系统" → crm.html
+
+- **面包屑导航**
+  - "员工中心" → index.html
+  - "小美工作台" → xiaomei_today_tasks.html (当前页面)
+
+- **任务卡片**
+  - 任务详情链接 → 特定任务详情页面 (如detail1.html)
+  - 任务操作按钮 → 相应的操作界面
+
+- **顶部工具栏**
+  - 通知图标 → 弹出通知面板
+  - 设置图标 → 系统设置页面
+  - 用户头像 → 用户个人设置
+
+### 小明工作台 (customer_service.html) 的跳转逻辑
+- **侧边导航栏**
+  - "员工中心" → index.html
+  - "小明工作台" → customer_service.html (当前页面)
+  - "客户管理" → crm.html
+
+- **工作台子菜单**
+  - "服务记录" → service_records.html
+  - "工单管理" → ticket_management.html
+  - "服务分析" → service_analysis.html
+
+- **面包屑导航**
+  - "员工中心" → index.html
+  - "小明工作台" → customer_service.html (当前页面)
+
+- **工单/服务卡片**
+  - 工单详情链接 → 特定工单详情页面
+  - 客户信息链接 → 客户详情页面
+  - 服务记录链接 → 服务记录详情页面
+
+- **顶部工具栏**
+  - 通知图标 → 弹出通知面板
+  - 设置图标 → 系统设置页面
+  - 用户头像 → 用户个人设置
+
+### 客户管理系统 (crm.html) 的跳转逻辑
+- **侧边导航栏**
+  - "员工中心" → index.html
+  - "小美工作台" → xiaomei_today_tasks.html
+  - "小明工作台" → customer_service.html
+  - "客户管理" → crm.html (当前页面)
+
+- **客户管理子菜单**
+  - "客户列表" → customer_list.html
+  - "服务记录" → service_records.html
+  - "关系维护" → relationship_management.html
+
+- **面包屑导航**
+  - "员工中心" → index.html
+  - "客户管理系统" → crm.html (当前页面)
+
+- **客户卡片/列表**
+  - 客户详情链接 → 客户详情页面
+  - 服务历史链接 → 客户服务历史页面
+  - 操作按钮 → 相应的操作界面
+
+## 通用导航元素
+
+### 顶部导航栏
+所有页面共享顶部导航栏，包含：
+- AION Logo：点击后返回员工中心(index.html)
+- 页面标题：显示当前所在页面
+- 通知图标：显示未读通知数量，点击展开通知列表
+- 设置图标：点击进入系统设置
+- 用户头像：点击展开用户菜单，包含个人设置、切换账号和退出登录选项
+
+### 侧边导航栏
+所有页面共享侧边导航栏，根据用户权限和当前页面显示不同的菜单项：
+- 固定显示"员工中心"入口
+- 根据权限显示可用的工作台
+- 当前页面对应的菜单项会高亮显示
+- 可折叠的子菜单组
+
+### 面包屑导航
+所有内部页面都包含面包屑导航，清晰显示当前页面在系统中的位置和层级关系，便于用户了解当前位置并快速回到上级页面。
+
+## 使用说明
+
+1. 通过员工中心（index.html）进入系统
+2. 根据职责选择相应的工作台
+3. 使用左侧导航栏进行功能切换
+4. 通过面包屑导航确认当前位置
+5. 使用顶部工具栏访问通用功能
 
 ## 注意事项
-- 确保所有链接使用相对路径
-- 保持导航栏和面包屑的状态同步
-- 维护一致的视觉样式和交互效果
-- 确保所有跳转按钮和链接都正确指向目标页面 # AION-worsurf
-# AION-worsurf-
-# AION-worsurf-
+
+- 确保系统余额充足，避免服务中断
+- 定期查看通知中心的系统公告
+- 及时处理待办任务和工单
+- 保持良好的服务质量和客户满意度
